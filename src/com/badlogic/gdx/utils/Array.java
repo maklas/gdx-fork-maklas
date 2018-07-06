@@ -445,6 +445,38 @@ public class Array<T> implements Iterable<T> {
 		return iterable.iterator();
 	}
 
+	public Array<T> foreach(Consumer<T> c){
+		for (int i = 0; i < size; i++) {
+			c.accept(items[i]);
+		}
+		return this;
+	}
+
+	public Array<T> filter(Predicate<T> p){
+		for (Iterator<T> i = iterator(); i.hasNext();){
+			T next = i.next();
+			if (!p.evaluate(next)){
+				i.remove();
+			}
+		}
+		return this;
+	}
+
+	public <R> Array<R> map(MapFunction<T, R> mapFunction){
+		Array<R> array = new Array<R>();
+		for (int i = 0; i < size; i++) {
+			array.add(mapFunction.map(items[i]));
+		}
+		return array;
+	}
+
+
+	public Array<T> cpy(){
+		Array<T> ts = new Array<T>();
+		ts.addAll(items, 0, size);
+		return ts;
+	}
+
 	/** Returns an iterable for the selected items in the array. Remove is supported, but not between hasNext() and next(). Note
 	 * that the same iterable instance is returned each time this method is called. Use the {@link Predicate.PredicateIterable}
 	 * constructor for nested or multithreaded iteration. */
