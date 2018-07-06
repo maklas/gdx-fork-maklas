@@ -452,6 +452,14 @@ public class Array<T> implements Iterable<T> {
 		return this;
 	}
 
+	public Array<T> callAndClear(Consumer<T> c){
+		for (int i = 0; i < size; i++) {
+			c.accept(items[i]);
+		}
+		clear();
+		return this;
+	}
+
 	public Array<T> filter(Predicate<T> p){
 		for (Iterator<T> i = iterator(); i.hasNext();){
 			T next = i.next();
