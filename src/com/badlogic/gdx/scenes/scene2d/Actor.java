@@ -28,6 +28,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.Align;
@@ -227,6 +228,17 @@ public class Actor {
 			return true;
 		}
 		return false;
+	}
+
+	public ChangeListener addChangeListener(final Runnable onChangeAction){
+		ChangeListener ret = new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				onChangeAction.run();
+			}
+		};
+		addListener(ret);
+		return ret;
 	}
 
 	public boolean removeListener (EventListener listener) {
