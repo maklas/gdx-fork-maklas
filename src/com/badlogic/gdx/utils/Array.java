@@ -339,6 +339,12 @@ public class Array<T> implements Iterable<T> {
 		return items[0];
 	}
 
+	public T last(){
+		int size = this.size;
+		if (size == 0) throw new IllegalStateException("Array is empty.");
+		return items[size - 1];
+	}
+
 	public void clear () {
 		T[] items = this.items;
 		for (int i = 0, n = size; i < n; i++)
