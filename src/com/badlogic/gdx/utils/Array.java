@@ -511,6 +511,15 @@ public class Array<T> implements Iterable<T> {
 		size = newSize;
 	}
 
+	public int count(Predicate<T> p){
+		int counter = 0;
+		for (int i = 0; i < size; i++) {
+			if (p.evaluate(items[i])) counter++;
+		}
+
+		return counter;
+	}
+
 	/** Returns a random item from the array, or null if the array is empty. */
 	public T random () {
 		if (size == 0) return null;
