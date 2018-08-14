@@ -520,6 +520,13 @@ public class Array<T> implements Iterable<T> {
 		return counter;
 	}
 
+	public boolean containsWith(Predicate<T> p){
+		for (int i = 0; i < size; i++) {
+			if (p.evaluate(items[i])) return true;
+		}
+		return false;
+	}
+
 	/** Returns a random item from the array, or null if the array is empty. */
 	public T random () {
 		if (size == 0) return null;
