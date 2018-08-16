@@ -520,7 +520,7 @@ public class Array<T> implements Iterable<T> {
 		return counter;
 	}
 
-	public boolean containsWith(Predicate<T> p){
+	public boolean atLeastOneFits(Predicate<T> p){
 		for (int i = 0; i < size; i++) {
 			if (p.evaluate(items[i])) return true;
 		}
