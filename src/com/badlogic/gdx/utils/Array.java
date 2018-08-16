@@ -16,12 +16,12 @@
 
 package com.badlogic.gdx.utils;
 
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.reflect.ArrayReflection;
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.reflect.ArrayReflection;
 
 /** A resizable, ordered or unordered array of objects. If unordered, this class avoids a memory copy when removing elements (the
  * last element is moved to the removed element's position).
@@ -451,6 +451,9 @@ public class Array<T> implements Iterable<T> {
 		return iterable.iterator();
 	}
 
+	/**
+	 * ForEach method implemetation for low Android SDK usage
+	 */
 	public Array<T> foreach(Consumer<T> c){
 		for (int i = 0; i < size; i++) {
 			c.accept(items[i]);
@@ -458,6 +461,9 @@ public class Array<T> implements Iterable<T> {
 		return this;
 	}
 
+	/**
+	 * Calls the Consumer on every item in the array just before removing all items from it.
+	 */
 	public Array<T> callAndClear(Consumer<T> c){
 		for (int i = 0; i < size; i++) {
 			c.accept(items[i]);
@@ -466,6 +472,10 @@ public class Array<T> implements Iterable<T> {
 		return this;
 	}
 
+	/**
+	 * Removes items if they don't satisfy Predicate. Doesn't create new Array.
+	 * If you need new array, use array.cpy().filter();
+	 */
 	public Array<T> filter(Predicate<T> p){
 		for (Iterator<T> i = iterator(); i.hasNext();){
 			T next = i.next();
@@ -476,10 +486,28 @@ public class Array<T> implements Iterable<T> {
 		return this;
 	}
 
+	/**
+	 * Collects mapped values into new Array
+	 */
 	public <R> Array<R> map(MapFunction<T, R> mapFunction){
 		Array<R> array = new Array<R>();
 		for (int i = 0; i < size; i++) {
 			array.add(mapFunction.map(items[i]));
+		}
+		return array;
+	}
+
+	/**
+	 * Collects mapped values into new Array.
+	 * If mapFunction returns <b>null</b>, it's not added in resulted array
+	 */
+	public <R> Array<R> mapReduce(MapFunction<T, R> mapFunction){
+		Array<R> array = new Array<R>();
+		T[] items = this.items;
+		for (int i = 0; i < size; i++) {
+			R mappedValue = mapFunction.map(items[i]);
+			if (mappedValue != null)
+				array.add(mappedValue);
 		}
 		return array;
 	}
@@ -511,6 +539,9 @@ public class Array<T> implements Iterable<T> {
 		size = newSize;
 	}
 
+	/**
+	 * Returns how many items fit the predcate in the array
+	 */
 	public int count(Predicate<T> p){
 		int counter = 0;
 		for (int i = 0; i < size; i++) {
@@ -520,6 +551,31 @@ public class Array<T> implements Iterable<T> {
 		return counter;
 	}
 
+	/**
+	 * Summarizes arbitrary long value from items.
+	 */
+	public long summarize(LongMapFunction<T> m){
+		long sum = 0;
+		for (int i = 0; i < size; i++) {
+			sum += m.map(items[i]);
+		}
+		return sum;
+	}
+
+	/**
+	 * Summarizes arbitrary double value from items.
+	 */
+	public double summarize(DoubleMapFunction<T> m){
+		double sum = 0;
+		for (int i = 0; i < size; i++) {
+			sum += m.map(items[i]);
+		}
+		return sum;
+	}
+
+	/**
+	 * Checks items on predicate. Returns as soon as predicate returns true on any item
+	 */
 	public boolean atLeastOneFits(Predicate<T> p){
 		for (int i = 0; i < size; i++) {
 			if (p.evaluate(items[i])) return true;
