@@ -398,6 +398,11 @@ public class Array<T> implements Iterable<T> {
 		Sort.instance().sort(items, comparator, 0, size);
 	}
 
+	public Array<T> sortAndRet(Comparator<? super T> comparator){
+		this.sort(comparator);
+		return this;
+	}
+
 	/** Selects the nth-lowest element from the Array according to Comparator ranking. This might partially sort the Array. The
 	 * array must have a size greater than 0, or a {@link com.badlogic.gdx.utils.GdxRuntimeException} will be thrown.
 	 * @see Select
