@@ -19,9 +19,7 @@ package com.badlogic.gdx.utils;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.reflect.ArrayReflection;
 
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /** A resizable, ordered or unordered array of objects. If unordered, this class avoids a memory copy when removing elements (the
  * last element is moved to the removed element's position).
