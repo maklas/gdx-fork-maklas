@@ -16,9 +16,7 @@
 
 package com.badlogic.gdx.utils;
 
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.reflect.ArrayReflection;
@@ -76,6 +74,14 @@ public class Array<T> implements Iterable<T> {
 		this(array.ordered, array.size, array.items.getClass().getComponentType());
 		size = array.size;
 		System.arraycopy(array.items, 0, items, 0, size);
+	}
+
+	public Array (List<? extends T> list){
+		size = list.size();
+		items = (T[])new Object[size];
+		for (int i = 0; i < size; i++) {
+			items[i] = list.get(i);
+		}
 	}
 
 	/** Creates a new ordered array containing the elements in the specified array. The new array will have the same type of
@@ -536,6 +542,14 @@ public class Array<T> implements Iterable<T> {
 		V[] result = (V[])ArrayReflection.newInstance(type, size);
 		System.arraycopy(items, 0, result, 0, size);
 		return result;
+	}
+
+	public List<T> toList(){
+		ArrayList<T> list = new ArrayList<T>(size);
+		for (int i = 0; i < size; i++) {
+			list.add((T)items[i]);
+		}
+		return list;
 	}
 
 	public int hashCode () {
