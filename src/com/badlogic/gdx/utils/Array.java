@@ -20,6 +20,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.reflect.ArrayReflection;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 /** A resizable, ordered or unordered array of objects. If unordered, this class avoids a memory copy when removing elements (the
  * last element is moved to the removed element's position).
@@ -235,6 +236,69 @@ public class Array<T> implements Iterable<T> {
 				if (value.equals(items[i])) return i;
 		}
 		return -1;
+	}
+
+
+	/**
+	 * Calls service.execute on each objects of this array. Returns immidiately
+	 */
+	public void parallelExecute(Executor service, MapFunction<T, Runnable> consumer){
+		for (int i = 0; i < size; i++) {
+			service.execute(consumer.map(items[i]));
+		}
+	}
+
+	/**
+	 * <li>Creates new Executor service at size of min(Array.size, maxThreads)</li>
+	 * <li>and submits all mapped Runnables to it. </li>
+	 * <li>Waits for min(end of all executions, specified amount of time)</li>
+	 * <li>Returns true if successfully executed on each of them by current Time</li>
+	 * <li>Calls shutdownNow if some tasks are still running after specified amount of time</li>
+	 */
+	public boolean pararlelExecuteAndWait(int maxThreads, long waitMillis, MapFunction<T, Runnable> consumer) throws InterruptedException {
+		ExecutorService service = Executors.newFixedThreadPool(Math.min(maxThreads, size));
+		parallelExecute(service, consumer);
+		service.shutdown();
+		boolean b = service.awaitTermination(waitMillis, TimeUnit.MILLISECONDS);
+		if (!b) service.shutdownNow();
+		return b;
+	}
+
+	/**
+	 * <li>Creates new Executor service at size of min(Array.size, maxThreads)</li>
+	 * <li>and submits all mapped callables to it. </li>
+	 * <li>Waits for min(end of all executions, specified amount of time)</li>
+	 * <li>Returns values which successfully mapped in parrarel</li>
+	 */
+	public <V> Array<V> parallelInvokeAndWait(int maxThreads, long waitMillis, MapFunction<T, Callable<V>> mapFunc) throws InterruptedException {
+		ExecutorService service = Executors.newFixedThreadPool(Math.min(maxThreads, size));
+		Array<Future<V>> futures = parallelSubmit(service, mapFunc);
+		service.shutdown();
+		service.awaitTermination(waitMillis, TimeUnit.MILLISECONDS);
+		Array<V> returnArr = new Array<V>();
+		for (Future<V> future : futures) {
+			if (future.isDone() && !future.isCancelled()){
+				V value = null;
+				try {
+					value = future.get();
+				} catch (ExecutionException e) {}
+				if (value != null)
+					returnArr.add(value);
+			}
+		}
+
+		return returnArr;
+	}
+
+	/**
+	 * Submits mapped Callables for execution.
+	 */
+	public <V> Array<Future<V>> parallelSubmit(ExecutorService service, MapFunction<T, Callable<V>> mapFunc) {
+		Array<Future<V>> futures = new Array<Future<V>>();
+		for (int i = 0; i < size; i++) {
+			futures.add(service.submit(mapFunc.map(items[i])));
+		}
+		return futures;
 	}
 
 	/** Removes the first instance of the specified value in the array.
