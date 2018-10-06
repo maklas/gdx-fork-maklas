@@ -664,6 +664,46 @@ public class Array<T> implements Iterable<T> {
 		return items[MathUtils.random(0, size - 1)];
 	}
 
+	public Array<T> removeDuplicates(boolean identity){
+		if (size == 0) return this;
+		T[] oldItems = items;
+		T[] newItems = items = (T[])ArrayReflection.newInstance(items.getClass().getComponentType(), size);
+		newItems[0] = oldItems[0];
+		int j = 1;
+		if (identity) {
+			for (int i = 1; i < size; i++) {
+				T current = oldItems[i];
+				boolean alreadyExists = false;
+				for (int k = 0; k < j; k++) {
+					if (current == newItems[k]) {
+						alreadyExists = true;
+						break;
+					}
+				}
+				if (!alreadyExists) {
+					newItems[j++] = current;
+				}
+			}
+		} else {
+			for (int i = 1; i < size; i++) {
+				T current = oldItems[i];
+				boolean alreadyExists = false;
+				for (int k = 0; k < j; k++) {
+					T iterItem = newItems[k];
+					if (current == null && iterItem == null || (current != null && current.equals(iterItem))) {
+						alreadyExists = true;
+						break;
+					}
+				}
+				if (!alreadyExists) {
+					newItems[j++] = current;
+				}
+			}
+		}
+		size = j;
+		return this;
+	}
+
 	/** Returns the items as an array. Note the array is typed, so the {@link #Array(Class)} constructor must have been used.
 	 * Otherwise use {@link #toArray(Class)} to specify the array type. */
 	public T[] toArray () {
