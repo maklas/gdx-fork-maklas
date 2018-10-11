@@ -255,7 +255,7 @@ public class Array<T> implements Iterable<T> {
 	 * <li>Returns true if successfully executed on each of them by current Time</li>
 	 * <li>Calls shutdownNow if some tasks are still running after specified amount of time</li>
 	 */
-	public boolean pararlelExecuteAndWait(int maxThreads, long waitMillis, MapFunction<T, Runnable> consumer) throws InterruptedException {
+	public boolean parallelExecuteAndWait(int maxThreads, long waitMillis, MapFunction<T, Runnable> consumer) throws InterruptedException {
 		ExecutorService service = Executors.newFixedThreadPool(Math.min(maxThreads, size));
 		parallelExecute(service, consumer);
 		service.shutdown();
