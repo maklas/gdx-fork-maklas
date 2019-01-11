@@ -26,11 +26,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
-import com.badlogic.gdx.scenes.scene2d.utils.ArraySelection;
+import com.badlogic.gdx.scenes.scene2d.utils.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Disableable;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.*;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
@@ -265,6 +262,15 @@ public class SelectBox<T> extends Widget implements Disableable {
 			selection.set(items.first());
 		else
 			selection.clear();
+	}
+
+	public void addChangeListener(final Consumer<T> listener){
+		addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				listener.accept(getSelected());
+			}
+		});
 	}
 
 	/** @return The index of the first selected item. The top item has an index of 0. Nothing selected has an index of -1. */
