@@ -16,9 +16,6 @@
 
 package com.badlogic.gdx.graphics;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetLoaderParameters.LoadedCallback;
@@ -34,6 +31,9 @@ import com.badlogic.gdx.graphics.glutils.PixmapTextureData;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /** Wraps a standard OpenGL ES Cubemap. Must be disposed when it is no longer used.
  * @author Xoppa */
@@ -99,13 +99,13 @@ public class Cubemap extends GLTexture {
 
 	/** Construct a Cubemap with the specified texture files for the sides, does not generate mipmaps. */
 	public Cubemap (FileHandle positiveX, FileHandle negativeX, FileHandle positiveY, FileHandle negativeY, FileHandle positiveZ,
-		FileHandle negativeZ) {
+                    FileHandle negativeZ) {
 		this(positiveX, negativeX, positiveY, negativeY, positiveZ, negativeZ, false);
 	}
 
 	/** Construct a Cubemap with the specified texture files for the sides, optionally generating mipmaps. */
 	public Cubemap (FileHandle positiveX, FileHandle negativeX, FileHandle positiveY, FileHandle negativeY, FileHandle positiveZ,
-		FileHandle negativeZ, boolean useMipMaps) {
+                    FileHandle negativeZ, boolean useMipMaps) {
 		this(TextureData.Factory.loadFromFile(positiveX, useMipMaps), TextureData.Factory.loadFromFile(negativeX, useMipMaps),
 			TextureData.Factory.loadFromFile(positiveY, useMipMaps), TextureData.Factory.loadFromFile(negativeY, useMipMaps),
 			TextureData.Factory.loadFromFile(positiveZ, useMipMaps), TextureData.Factory.loadFromFile(negativeZ, useMipMaps));
@@ -118,7 +118,7 @@ public class Cubemap extends GLTexture {
 
 	/** Construct a Cubemap with the specified {@link Pixmap}s for the sides, optionally generating mipmaps. */
 	public Cubemap (Pixmap positiveX, Pixmap negativeX, Pixmap positiveY, Pixmap negativeY, Pixmap positiveZ, Pixmap negativeZ,
-		boolean useMipMaps) {
+                    boolean useMipMaps) {
 		this(positiveX == null ? null : new PixmapTextureData(positiveX, null, useMipMaps, false), negativeX == null ? null
 			: new PixmapTextureData(negativeX, null, useMipMaps, false), positiveY == null ? null : new PixmapTextureData(positiveY,
 			null, useMipMaps, false), negativeY == null ? null : new PixmapTextureData(negativeY, null, useMipMaps, false),
@@ -136,7 +136,7 @@ public class Cubemap extends GLTexture {
 
 	/** Construct a Cubemap with the specified {@link TextureData}'s for the sides */
 	public Cubemap (TextureData positiveX, TextureData negativeX, TextureData positiveY, TextureData negativeY,
-		TextureData positiveZ, TextureData negativeZ) {
+                    TextureData positiveZ, TextureData negativeZ) {
 		super(GL20.GL_TEXTURE_CUBE_MAP);
 		minFilter = TextureFilter.Nearest;
 		magFilter = TextureFilter.Nearest;

@@ -222,7 +222,7 @@ public class NinePatch {
 	}
 
 	private void load (TextureRegion[] patches) {
-		final float color = Color.WHITE.toFloatBits(); // placeholder color, overwritten at draw time
+		final float color = Color.WHITE_FLOAT_BITS; // placeholder color, overwritten at draw time
 
 		if (patches[BOTTOM_LEFT] != null) {
 			bottomLeft = add(patches[BOTTOM_LEFT], color, false, false);
@@ -371,7 +371,7 @@ public class NinePatch {
 	}
 
 	public void draw (Batch batch, float x, float y, float originX, float originY, float width, float height, float scaleX,
-		float scaleY, float rotation) {
+                      float scaleY, float rotation) {
 		prepareVertices(batch, x, y, width, height);
 		float worldOriginX = x + originX, worldOriginY = y + originY;
 		int n = this.idx;

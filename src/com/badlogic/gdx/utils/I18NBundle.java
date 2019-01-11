@@ -16,16 +16,14 @@
 
 package com.badlogic.gdx.utils;
 
+import com.badlogic.gdx.files.FileHandle;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
-
-import com.badlogic.gdx.files.FileHandle;
 
 /** A {@code I18NBundle} provides {@code Locale}-specific resources loaded from property files. A bundle contains a number of named
  * resources, whose names and values are {@code Strings}. A bundle may have a parent bundle, and when a resource is not found in a
@@ -265,10 +263,10 @@ public class I18NBundle {
 			locales.add(locale);
 		}
 		if (country.length() > 0) {
-			locales.add((locales.size() == 0) ? locale : new Locale(language, country));
+			locales.add(locales.isEmpty() ? locale : new Locale(language, country));
 		}
 		if (language.length() > 0) {
-			locales.add((locales.size() == 0) ? locale : new Locale(language));
+			locales.add(locales.isEmpty() ? locale : new Locale(language));
 		}
 		locales.add(ROOT_LOCALE);
 		return locales;
@@ -293,7 +291,7 @@ public class I18NBundle {
 	}
 
 	private static I18NBundle loadBundleChain (FileHandle baseFileHandle, String encoding, List<Locale> candidateLocales,
-		int candidateIndex, I18NBundle baseBundle) {
+                                               int candidateIndex, I18NBundle baseBundle) {
 		Locale targetLocale = candidateLocales.get(candidateIndex);
 		I18NBundle parent = null;
 		if (candidateIndex != candidateLocales.size() - 1) {

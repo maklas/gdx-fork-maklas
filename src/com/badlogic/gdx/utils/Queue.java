@@ -16,10 +16,10 @@
 
 package com.badlogic.gdx.utils;
 
+import com.badlogic.gdx.utils.reflect.ArrayReflection;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import com.badlogic.gdx.utils.reflect.ArrayReflection;
 
 /** A resizable, ordered array of objects with efficient add and remove at the beginning and end. Values in the backing array may
  * wrap back to the beginning, making add and remove at the beginning and end O(1) (unless the backing array needs to resize when
@@ -55,7 +55,7 @@ public class Queue<T> implements Iterable<T> {
 	 * backing array of the specified type via reflection, which is necessary only when accessing the backing array directly. */
 	public Queue (int initialSize, Class<T> type) {
 		// noinspection unchecked
-		this.values = (T[])ArrayReflection.newInstance(type, initialSize);
+		this.values = (T[]) ArrayReflection.newInstance(type, initialSize);
 	}
 
 	/** Append given object to the tail. (enqueue to tail) Unless backing array needs resizing, operates in O(1) time.
@@ -113,7 +113,7 @@ public class Queue<T> implements Iterable<T> {
 		final int tail = this.tail;
 
 		@SuppressWarnings("unchecked")
-		final T[] newArray = (T[])ArrayReflection.newInstance(values.getClass().getComponentType(), newSize);
+		final T[] newArray = (T[]) ArrayReflection.newInstance(values.getClass().getComponentType(), newSize);
 		if (head < tail) {
 			// Continuous
 			System.arraycopy(values, head, newArray, 0, tail - head);
@@ -244,6 +244,11 @@ public class Queue<T> implements Iterable<T> {
 		}
 		size--;
 		return value;
+	}
+
+	/** Returns true if the queue is empty. */
+	public boolean isEmpty () {
+		return size == 0;
 	}
 
 	/** Returns the first (head) item in the queue (without removing it).

@@ -575,7 +575,7 @@ public class StringBuilder implements Appendable, CharSequence {
 	 * @param string the string to find.
 	 * @return the index of the specified character, -1 if the character isn't found.
 	 * @throws NullPointerException if {@code string} is {@code null}.
-	 * @see String#lastIndexOf(java.lang.String)
+	 * @see String#lastIndexOf(String)
 	 * @since 1.4 */
 	public int lastIndexOf (String string) {
 		return lastIndexOf(string, length);
@@ -1001,6 +1001,11 @@ public class StringBuilder implements Appendable, CharSequence {
 	public StringBuilder deleteCharAt (int index) {
 		deleteCharAt0(index);
 		return this;
+	}
+
+	/** Sets length to 0. */
+	public void clear () {
+		length = 0;
 	}
 
 	/** Inserts the string representation of the specified {@code boolean} value at the specified {@code offset}. The

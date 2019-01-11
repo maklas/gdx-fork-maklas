@@ -16,13 +16,7 @@
 
 package com.badlogic.gdx.utils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.ByteBuffer;
 
 /** Provides utility methods to copy streams. */

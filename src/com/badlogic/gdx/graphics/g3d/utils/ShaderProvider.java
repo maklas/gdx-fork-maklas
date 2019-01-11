@@ -16,7 +16,6 @@
 
 package com.badlogic.gdx.graphics.g3d.utils;
 
-import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.Shader;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -32,5 +31,5 @@ public interface ShaderProvider {
 	Shader getShader (Renderable renderable);
 
 	/** Disposes all resources created by the provider */
-	public void dispose ();
+	public void dispose();
 }

@@ -13,11 +13,11 @@
 
 package com.badlogic.gdx.math;
 
-import java.io.Serializable;
-
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.NumberUtils;
 import com.badlogic.gdx.utils.Scaling;
+
+import java.io.Serializable;
 
 /** Encapsulates a 2D rectangle defined by its corner point in the bottom left and its extents in x (width) and y (height).
  * @author badlogicgames@gmail.com */

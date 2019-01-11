@@ -17,11 +17,12 @@
 package com.badlogic.gdx.scenes.scene2d.utils;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasSprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 /** Drawable for a {@link TextureRegion}.
  * @author Nathan Sweet */
@@ -30,6 +31,10 @@ public class TextureRegionDrawable extends BaseDrawable implements TransformDraw
 
 	/** Creates an uninitialized TextureRegionDrawable. The texture region must be set before use. */
 	public TextureRegionDrawable () {
+	}
+
+	public TextureRegionDrawable (Texture texture) {
+		setRegion(new TextureRegion(texture));
 	}
 
 	public TextureRegionDrawable (TextureRegion region) {
@@ -46,7 +51,7 @@ public class TextureRegionDrawable extends BaseDrawable implements TransformDraw
 	}
 
 	public void draw (Batch batch, float x, float y, float originX, float originY, float width, float height, float scaleX,
-		float scaleY, float rotation) {
+                      float scaleY, float rotation) {
 		batch.draw(region, x, y, originX, originY, width, height, scaleX, scaleY, rotation);
 	}
 

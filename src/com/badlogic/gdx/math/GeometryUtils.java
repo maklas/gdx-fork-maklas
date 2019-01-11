@@ -167,7 +167,7 @@ public final class GeometryUtils {
 	}
 
 	static public Vector2 quadrilateralCentroid (float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4,
-		Vector2 centroid) {
+                                                 Vector2 centroid) {
 		float avgX1 = (x1 + x2 + x3) / 3;
 		float avgY1 = (y1 + y2 + y3) / 3;
 		float avgX2 = (x1 + x4 + x3) / 3;

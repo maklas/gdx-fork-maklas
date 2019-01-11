@@ -17,11 +17,7 @@
 package com.badlogic.gdx.scenes.scene2d;
 
 import com.badlogic.gdx.Application.ApplicationType;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -38,12 +34,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table.Debug;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener.FocusEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.Pool.Poolable;
-import com.badlogic.gdx.utils.Pools;
-import com.badlogic.gdx.utils.Scaling;
-import com.badlogic.gdx.utils.SnapshotArray;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -114,14 +106,6 @@ public class Stage extends InputAdapter implements Disposable {
 		root.setStage(this);
 
 		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-	}
-
-	/** Creates a stage with the specified batch. This can be used to avoid creating a new batch (which can be
-	 * somewhat slow) if multiple stages are used during an application's life time.
-	 * @param batch Will not be disposed if {@link #dispose()} is called, handle disposal yourself. */
-	public Stage (Batch batch) {
-		this(new ScalingViewport(Scaling.stretch, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new OrthographicCamera()), batch);
-		ownsBatch = false;
 	}
 
 	public void draw () {
@@ -284,9 +268,8 @@ public class Stage extends InputAdapter implements Disposable {
 		Actor target = hit(tempCoords.x, tempCoords.y, true);
 		if (target == null) {
 			if (root.getTouchable() == Touchable.enabled) root.fire(event);
-		} else {
+		} else
 			target.fire(event);
-		}
 
 		boolean handled = event.isHandled();
 		Pools.free(event);

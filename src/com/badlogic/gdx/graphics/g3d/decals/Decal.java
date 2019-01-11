@@ -92,9 +92,10 @@ public class Decal {
 		vertices[C4] = color;
 	}
 
-	/** @see #setColor(Color) */
-	public void setColor (float color) {
-		this.color.set(NumberUtils.floatToIntColor(color));
+	/** Sets the color of this decal, expanding the alpha from 0-254 to 0-255.
+	 * @see #setColor(Color) */
+	public void setPackedColor (float color) {
+		Color.abgr8888ToColor(this.color, color);
 		vertices[C1] = color;
 		vertices[C2] = color;
 		vertices[C3] = color;
@@ -685,7 +686,7 @@ public class Decal {
 	 * @param material Custom decal material
 	 * @return Created decal */
 	public static Decal newDecal (float width, float height, TextureRegion textureRegion, int srcBlendFactor, int dstBlendFactor,
-		DecalMaterial material) {
+                                  DecalMaterial material) {
 		Decal decal = new Decal(material);
 		decal.setTextureRegion(textureRegion);
 		decal.setBlending(srcBlendFactor, dstBlendFactor);

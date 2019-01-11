@@ -16,22 +16,16 @@
 
 package com.badlogic.gdx;
 
+import com.badlogic.gdx.Application.ApplicationType;
+import com.badlogic.gdx.net.*;
+import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.Pool.Poolable;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.badlogic.gdx.Application.ApplicationType;
-import com.badlogic.gdx.net.HttpRequestHeader;
-import com.badlogic.gdx.net.HttpResponseHeader;
-import com.badlogic.gdx.net.HttpStatus;
-import com.badlogic.gdx.net.ServerSocket;
-import com.badlogic.gdx.net.ServerSocketHints;
-import com.badlogic.gdx.net.Socket;
-import com.badlogic.gdx.net.SocketHints;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.Pool.Poolable;
 
 /** Provides methods to perform networking operations, such as simple HTTP get and post requests, and TCP server/client socket
  * communication.</p>
@@ -62,7 +56,7 @@ public interface Net {
 		 * </p>
 		 * @return the result as a byte[] or null in case of a timeout or if the operation was canceled/terminated abnormally. The
 		 *         timeout is specified when creating the HTTP request, with {@link HttpRequest#setTimeOut(int)} */
-		byte[] getResult ();
+		byte[] getResult();
 
 		/** Returns the data of the HTTP response as a {@link String}.
 		 * <p>
@@ -70,25 +64,25 @@ public interface Net {
 		 * </p>
 		 * @return the result as a string or null in case of a timeout or if the operation was canceled/terminated abnormally. The
 		 *         timeout is specified when creating the HTTP request, with {@link HttpRequest#setTimeOut(int)} */
-		String getResultAsString ();
+		String getResultAsString();
 
 		/** Returns the data of the HTTP response as an {@link InputStream}. <b><br>
 		 * Warning:</b> Do not store a reference to this InputStream outside of
 		 * {@link HttpResponseListener#handleHttpResponse(HttpResponse)}. The underlying HTTP connection will be closed after that
 		 * callback finishes executing. Reading from the InputStream after it's connection has been closed will lead to exception.
 		 * @return An {@link InputStream} with the {@link HttpResponse} data. */
-		InputStream getResultAsStream ();
+		InputStream getResultAsStream();
 
 		/** Returns the {@link HttpStatus} containing the statusCode of the HTTP response. */
-		HttpStatus getStatus ();
+		HttpStatus getStatus();
 
 		/** Returns the value of the header with the given name as a {@link String}, or null if the header is not set. See
 		 * {@link HttpResponseHeader}. */
-		String getHeader (String name);
+		String getHeader(String name);
 
 		/** Returns a Map of the headers. The keys are Strings that represent the header name. Each values is a List of Strings that
 		 * represent the corresponding header values. See {@link HttpResponseHeader}. */
-		Map<String, List<String>> getHeaders ();
+		Map<String, List<String>> getHeaders();
 	}
 
 	/** Provides common HTTP methods to use when creating a {@link HttpRequest}.
@@ -116,13 +110,13 @@ public interface Net {
 	 * <li><strong>timeout:</strong> time spent trying to connect before giving up</li>
 	 * <li><strong>content:</strong> A string containing the data to be used when processing the HTTP request.</li>
 	 * </ul>
-	 * 
+	 *
 	 * Abstracts the concept of a HTTP Request:
-	 * 
+	 *
 	 * <pre>
 	 * Map<String, String> parameters = new HashMap<String, String>();
 	 * parameters.put("user", "myuser");
-	 * 
+	 *
 	 * HttpRequest httpGet = new HttpRequest(HttpMethods.Get);
 	 * httpGet.setUrl("http://somewhere.net");
 	 * httpGet.setContent(HttpParametersUtils.convertHttpParameters(parameters));
@@ -132,7 +126,7 @@ public interface Net {
 	 * 		status = httpResponse.getResultAsString();
 	 * 		//do stuff here based on response
 	 * 	}
-	 * 
+	 *
 	 * 	public void failed(Throwable t) {
 	 * 		status = "failed";
 	 * 		//do stuff here based on the failed attempt
@@ -153,7 +147,7 @@ public interface Net {
 		private boolean followRedirects = true;
 
 		private boolean includeCredentials = false;
-		
+
 		public HttpRequest () {
 			this.headers = new HashMap<String, String>();
 		}
@@ -205,7 +199,7 @@ public interface Net {
 		 * @param followRedirects whether to follow redirects.
 		 * @exception IllegalArgumentException if redirection is disabled on the GWT backend. */
 		public void setFollowRedirects (boolean followRedirects) throws IllegalArgumentException {
-			if (followRedirects == true || Gdx.app.getType() != ApplicationType.WebGL) {
+			if (followRedirects || Gdx.app.getType() != ApplicationType.WebGL) {
 				this.followRedirects = followRedirects;
 			} else {
 				throw new IllegalArgumentException("Following redirects can't be disabled using the GWT/WebGL backend!");
@@ -217,7 +211,7 @@ public interface Net {
 		public void setIncludeCredentials (boolean includeCredentials) {
 			this.includeCredentials = includeCredentials;
 		}
-		
+
 		/** Sets the HTTP method of the HttpRequest. */
 		public void setMethod (String httpMethod) {
 			this.httpMethod = httpMethod;
@@ -263,7 +257,7 @@ public interface Net {
 		public boolean getFollowRedirects () {
 			return followRedirects;
 		}
-		
+
 		/** Returns whether a cross-origin request will include credentials. By default false. */
 		public boolean getIncludeCredentials () {
 			return includeCredentials;
@@ -290,10 +284,10 @@ public interface Net {
 	public static interface HttpResponseListener {
 
 		/** Called when the {@link HttpRequest} has been processed and there is a {@link HttpResponse} ready. Passing data to the
-		 * rendering thread should be done using {@link Application#postRunnable(java.lang.Runnable runnable)} {@link HttpResponse}
+		 * rendering thread should be done using {@link Application#postRunnable(Runnable runnable)} {@link HttpResponse}
 		 * contains the {@link HttpStatus} and should be used to determine if the request was successful or not (see more info at
 		 * {@link HttpStatus#getStatusCode()}). For example:
-		 * 
+		 *
 		 * <pre>
 		 *  HttpResponseListener listener = new HttpResponseListener() {
 		 *  	public void handleHttpResponse (HttpResponse httpResponse) {
@@ -306,16 +300,16 @@ public interface Net {
 		 *  	}
 		 *  }
 		 * </pre>
-		 * 
+		 *
 		 * @param httpResponse The {@link HttpResponse} with the HTTP response values. */
-		void handleHttpResponse (HttpResponse httpResponse);
+		void handleHttpResponse(HttpResponse httpResponse);
 
 		/** Called if the {@link HttpRequest} failed because an exception when processing the HTTP request, could be a timeout any
 		 * other reason (not an HTTP error).
 		 * @param t If the HTTP request failed because an Exception, t encapsulates it to give more information. */
-		void failed (Throwable t);
+		void failed(Throwable t);
 
-		void cancelled ();
+		void cancelled();
 	}
 
 	/** Process the specified {@link HttpRequest} and reports the {@link HttpResponse} to the specified {@link HttpResponseListener}
@@ -323,9 +317,9 @@ public interface Net {
 	 * @param httpRequest The {@link HttpRequest} to be performed.
 	 * @param httpResponseListener The {@link HttpResponseListener} to call once the HTTP response is ready to be processed. Could
 	 *           be null, in that case no listener is called. */
-	public void sendHttpRequest (HttpRequest httpRequest, HttpResponseListener httpResponseListener);
+	public void sendHttpRequest(HttpRequest httpRequest, HttpResponseListener httpResponseListener);
 
-	public void cancelHttpRequest (HttpRequest httpRequest);
+	public void cancelHttpRequest(HttpRequest httpRequest);
 
 	/** Protocol used by {@link Net#newServerSocket(Protocol, int, ServerSocketHints)} and
 	 * {@link Net#newClientSocket(Protocol, String, int, SocketHints)}.
@@ -333,9 +327,9 @@ public interface Net {
 	public enum Protocol {
 		TCP
 	}
-	
+
 	/** Creates a new server socket on the given address and port, using the given {@link Protocol}, waiting for incoming connections.
-	 * 
+	 *
 	 * @param hostname the hostname or ip address to bind the socket to
 	 * @param port the port to listen on
 	 * @param hints additional {@link ServerSocketHints} used to create the socket. Input null to use the default setting provided
@@ -345,7 +339,7 @@ public interface Net {
 	public ServerSocket newServerSocket (Protocol protocol, String hostname, int port, ServerSocketHints hints);
 
 	/** Creates a new server socket on the given port, using the given {@link Protocol}, waiting for incoming connections.
-	 * 
+	 *
 	 * @param port the port to listen on
 	 * @param hints additional {@link ServerSocketHints} used to create the socket. Input null to use the default setting provided
 	 *           by the system.
@@ -354,7 +348,7 @@ public interface Net {
 	public ServerSocket newServerSocket (Protocol protocol, int port, ServerSocketHints hints);
 
 	/** Creates a new TCP client socket that connects to the given host and port.
-	 * 
+	 *
 	 * @param host the host address
 	 * @param port the port
 	 * @param hints additional {@link SocketHints} used to create the socket. Input null to use the default setting provided by the
@@ -365,10 +359,10 @@ public interface Net {
 	/** Launches the default browser to display a URI. If the default browser is not able to handle the specified URI, the
 	 * application registered for handling URIs of the specified type is invoked. The application is determined from the protocol
 	 * and path of the URI. A best effort is made to open the given URI; however, since external applications are involved, no guarantee
-	 * can be made as to whether the URI was actually opened. If it is known that the URI was not opened, false will be returned; 
+	 * can be made as to whether the URI was actually opened. If it is known that the URI was not opened, false will be returned;
 	 * otherwise, true will be returned.
-	 * 
+	 *
 	 * @param URI the URI to be opened.
 	 * @return false if it is known the uri was not opened, true otherwise. */
-	public boolean openURI (String URI);
+	public boolean openURI(String URI);
 }

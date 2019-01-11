@@ -20,12 +20,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.BitmapFontData;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.Glyph;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout.GlyphRun;
-import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.FloatArray;
-import com.badlogic.gdx.utils.IntArray;
-import com.badlogic.gdx.utils.NumberUtils;
-import com.badlogic.gdx.utils.Pools;
+import com.badlogic.gdx.utils.*;
 
 /** Caches glyph geometry for a BitmapFont, providing a fast way to render static text. This saves needing to compute the glyph
  * geometry each frame.
@@ -34,7 +29,6 @@ import com.badlogic.gdx.utils.Pools;
  * @author Alexander Dorokhov */
 public class BitmapFontCache {
 	static private final Color tempColor = new Color(1, 1, 1, 1);
-	static private final float whiteTint = Color.WHITE.toFloatBits();
 
 	private final BitmapFont font;
 	private boolean integer;
@@ -381,7 +375,7 @@ public class BitmapFontCache {
 			}
 		}
 
-		currentTint = whiteTint; // Cached glyphs have changed, reset the current tint.
+		currentTint = Color.WHITE_FLOAT_BITS; // Cached glyphs have changed, reset the current tint.
 	}
 
 	private void addGlyph (Glyph glyph, float x, float y, float color) {
@@ -448,7 +442,7 @@ public class BitmapFontCache {
 	/** Clears any cached glyphs and adds glyphs for the specified text.
 	 * @see #addText(CharSequence, float, float, int, int, float, int, boolean, String) */
 	public GlyphLayout setText (CharSequence str, float x, float y, int start, int end, float targetWidth, int halign,
-		boolean wrap) {
+                                boolean wrap) {
 		clear();
 		return addText(str, x, y, start, end, targetWidth, halign, wrap);
 	}
@@ -456,7 +450,7 @@ public class BitmapFontCache {
 	/** Clears any cached glyphs and adds glyphs for the specified text.
 	 * @see #addText(CharSequence, float, float, int, int, float, int, boolean, String) */
 	public GlyphLayout setText (CharSequence str, float x, float y, int start, int end, float targetWidth, int halign,
-		boolean wrap, String truncate) {
+                                boolean wrap, String truncate) {
 		clear();
 		return addText(str, x, y, start, end, targetWidth, halign, wrap, truncate);
 	}
@@ -483,7 +477,7 @@ public class BitmapFontCache {
 	/** Adds glyphs for the specified text.
 	 * @see #addText(CharSequence, float, float, int, int, float, int, boolean, String) */
 	public GlyphLayout addText (CharSequence str, float x, float y, int start, int end, float targetWidth, int halign,
-		boolean wrap) {
+                                boolean wrap) {
 		return addText(str, x, y, start, end, targetWidth, halign, wrap, null);
 	}
 
@@ -499,7 +493,7 @@ public class BitmapFontCache {
 	 *           string.
 	 * @return The glyph layout for the cached string (the layout's height is the distance from y to the baseline). */
 	public GlyphLayout addText (CharSequence str, float x, float y, int start, int end, float targetWidth, int halign,
-		boolean wrap, String truncate) {
+                                boolean wrap, String truncate) {
 		GlyphLayout layout = Pools.obtain(GlyphLayout.class);
 		pooledLayouts.add(layout);
 		layout.setText(font, str, start, end, color, targetWidth, halign, wrap, truncate);

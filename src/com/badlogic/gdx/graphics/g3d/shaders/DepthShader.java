@@ -84,7 +84,7 @@ public class DepthShader extends DefaultShader {
 	}
 
 	public DepthShader (final Renderable renderable, final Config config, final String prefix, final String vertexShader,
-		final String fragmentShader) {
+                        final String fragmentShader) {
 		this(renderable, config, new ShaderProgram(prefix + vertexShader, prefix + fragmentShader));
 	}
 

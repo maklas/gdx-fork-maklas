@@ -16,15 +16,11 @@
 
 package com.badlogic.gdx.graphics;
 
-import java.nio.FloatBuffer;
-
-
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.graphics.glutils.VertexArray;
 
 /** A single vertex attribute defined by its {@link Usage}, its number of components and its shader alias. The Usage is used
- * for uniquely identifying the vertex attribute from among its {@linkplain VertexAttributes} siblings. The number of components 
+ * for uniquely identifying the vertex attribute from among its {@linkplain VertexAttributes} siblings. The number of components
  * defines how many components the attribute has. The alias defines to which shader attribute this attribute should bind. The alias 
  * is used by a {@link Mesh} when drawing with a {@link ShaderProgram}. The alias can be changed at any time.
  * 
@@ -62,7 +58,7 @@ public final class VertexAttribute {
 	 * @param alias the alias used in a shader for this attribute. Can be changed after construction.
 	 * @param unit Optional unit/index specifier, used for texture coordinates and bone weights */
 	public VertexAttribute (int usage, int numComponents, String alias, int unit) {
-		this(usage, numComponents, usage == Usage.ColorPacked ? GL20.GL_UNSIGNED_BYTE : GL20.GL_FLOAT, 
+		this(usage, numComponents, usage == Usage.ColorPacked ? GL20.GL_UNSIGNED_BYTE : GL20.GL_FLOAT,
 				usage == Usage.ColorPacked, alias, unit);
 	}
 

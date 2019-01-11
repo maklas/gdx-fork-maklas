@@ -16,18 +16,13 @@
 
 package com.badlogic.gdx.graphics.g3d;
 
-import com.badlogic.gdx.graphics.g3d.model.Animation;
-import com.badlogic.gdx.graphics.g3d.model.Node;
-import com.badlogic.gdx.graphics.g3d.model.NodeAnimation;
-import com.badlogic.gdx.graphics.g3d.model.NodeKeyframe;
-import com.badlogic.gdx.graphics.g3d.model.NodePart;
+import com.badlogic.gdx.graphics.g3d.model.*;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
-import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.Pool;
 
 /** An instance of a {@link Model}, allows to specify global transform and modify the materials, as it has a copy of the model's
@@ -93,7 +88,7 @@ public class ModelInstance implements RenderableProvider {
 	 * @param parentTransform True to apply the parent's node transform to the instance (only applicable if recursive is true).
 	 * @param mergeTransform True to apply the source node transform to the instance transform, resetting the node transform. */
 	public ModelInstance (final Model model, final Matrix4 transform, final String nodeId, boolean parentTransform,
-		boolean mergeTransform) {
+                          boolean mergeTransform) {
 		this(model, transform, nodeId, true, parentTransform, mergeTransform);
 	}
 
@@ -103,7 +98,7 @@ public class ModelInstance implements RenderableProvider {
 	 * @param parentTransform True to apply the parent's node transform to the instance (only applicable if recursive is true).
 	 * @param mergeTransform True to apply the source node transform to the instance transform, resetting the node transform. */
 	public ModelInstance (final Model model, final String nodeId, boolean recursive, boolean parentTransform,
-		boolean mergeTransform) {
+                          boolean mergeTransform) {
 		this(model, null, nodeId, recursive, parentTransform, mergeTransform);
 	}
 
@@ -114,7 +109,7 @@ public class ModelInstance implements RenderableProvider {
 	 * @param parentTransform True to apply the parent's node transform to the instance (only applicable if recursive is true).
 	 * @param mergeTransform True to apply the source node transform to the instance transform, resetting the node transform. */
 	public ModelInstance (final Model model, final Matrix4 transform, final String nodeId, boolean recursive,
-		boolean parentTransform, boolean mergeTransform) {
+                          boolean parentTransform, boolean mergeTransform) {
 		this(model, transform, nodeId, recursive, parentTransform, mergeTransform, defaultShareKeyframes);
 	}
 
@@ -125,7 +120,7 @@ public class ModelInstance implements RenderableProvider {
 	 * @param parentTransform True to apply the parent's node transform to the instance (only applicable if recursive is true).
 	 * @param mergeTransform True to apply the source node transform to the instance transform, resetting the node transform. */
 	public ModelInstance (final Model model, final Matrix4 transform, final String nodeId, boolean recursive,
-		boolean parentTransform, boolean mergeTransform, boolean shareKeyframes) {
+                          boolean parentTransform, boolean mergeTransform, boolean shareKeyframes) {
 		this.model = model;
 		this.transform = transform == null ? new Matrix4() : transform;
 		Node copy, node = model.getNode(nodeId, recursive);

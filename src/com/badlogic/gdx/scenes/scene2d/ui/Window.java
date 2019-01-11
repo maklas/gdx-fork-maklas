@@ -22,11 +22,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
@@ -48,7 +44,7 @@ public class Window extends Table {
 	Label titleLabel;
 	Table titleTable;
 	boolean drawTitleTable;
-	
+
 	protected int edge;
 	protected boolean dragging;
 
@@ -207,9 +203,10 @@ public class Window extends Table {
 		return style;
 	}
 
-	void keepWithinStage () {
+	public void keepWithinStage () {
 		if (!keepWithinStage) return;
 		Stage stage = getStage();
+		if (stage == null) return;
 		Camera camera = stage.getCamera();
 		if (camera instanceof OrthographicCamera) {
 			OrthographicCamera orthographicCamera = (OrthographicCamera)camera;
@@ -269,6 +266,7 @@ public class Window extends Table {
 	}
 
 	public Actor hit (float x, float y, boolean touchable) {
+		if (!isVisible()) return null;
 		Actor hit = super.hit(x, y, touchable);
 		if (hit == null && isModal && (!touchable || getTouchable() == Touchable.enabled)) return this;
 		float height = getHeight();

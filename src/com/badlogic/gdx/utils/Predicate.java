@@ -18,14 +18,12 @@ package com.badlogic.gdx.utils;
 
 import java.util.Iterator;
 
-import com.badlogic.gdx.utils.Array.ArrayIterator;
-
 /** Interface used to select items within an iterator against a predicate.
  * @author Xoppa */
 public interface Predicate<T> {
 
 	/** @return true if the item matches the criteria and should be included in the iterator's items */
-	boolean evaluate (T t);
+	boolean evaluate(T arg0);
 
 	public class PredicateIterator<T> implements Iterator<T> {
 		public Iterator<T> iterator;

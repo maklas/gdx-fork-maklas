@@ -22,25 +22,12 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttribute;
-import com.badlogic.gdx.graphics.g3d.model.data.ModelAnimation;
-import com.badlogic.gdx.graphics.g3d.model.data.ModelData;
-import com.badlogic.gdx.graphics.g3d.model.data.ModelMaterial;
-import com.badlogic.gdx.graphics.g3d.model.data.ModelMesh;
-import com.badlogic.gdx.graphics.g3d.model.data.ModelMeshPart;
-import com.badlogic.gdx.graphics.g3d.model.data.ModelNode;
-import com.badlogic.gdx.graphics.g3d.model.data.ModelNodeAnimation;
-import com.badlogic.gdx.graphics.g3d.model.data.ModelNodeKeyframe;
-import com.badlogic.gdx.graphics.g3d.model.data.ModelNodePart;
-import com.badlogic.gdx.graphics.g3d.model.data.ModelTexture;
+import com.badlogic.gdx.graphics.g3d.model.data.*;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ArrayMap;
-import com.badlogic.gdx.utils.BaseJsonReader;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.*;
 
 public class G3dModelLoader extends ModelLoader<ModelLoader.ModelParameters> {
 	public static final short VERSION_HI = 0;
@@ -390,7 +377,7 @@ public class G3dModelLoader extends ModelLoader<ModelLoader.ModelParameters> {
 				if (keyframes != null && keyframes.isArray()) {
 					for (JsonValue keyframe = keyframes.child; keyframe != null; keyframe = keyframe.next) {
 						final float keytime = keyframe.getFloat("keytime", 0f) / 1000.f;
-						JsonValue translation = keyframe.get("translation"); 
+						JsonValue translation = keyframe.get("translation");
 						if (translation != null && translation.size == 3) {
 							if (nodeAnim.translation == null)
 								nodeAnim.translation = new Array<ModelNodeKeyframe<Vector3>>();

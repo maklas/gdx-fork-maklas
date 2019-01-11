@@ -16,8 +16,6 @@
 
 package com.badlogic.gdx.graphics.g2d;
 
-import static com.badlogic.gdx.graphics.Texture.TextureWrap.*;
-
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -27,20 +25,15 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData.Page;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData.Region;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.ObjectSet;
-import com.badlogic.gdx.utils.Sort;
-import com.badlogic.gdx.utils.StreamUtils;
+import com.badlogic.gdx.utils.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
+
+import static com.badlogic.gdx.graphics.Texture.TextureWrap.ClampToEdge;
+import static com.badlogic.gdx.graphics.Texture.TextureWrap.Repeat;
 
 /** Loads images from texture atlases created by TexturePacker.<br>
  * <br>
@@ -65,7 +58,7 @@ public class TextureAtlas implements Disposable {
 			public final TextureWrap vWrap;
 
 			public Page (FileHandle handle, float width, float height, boolean useMipMaps, Format format, TextureFilter minFilter,
-				TextureFilter magFilter, TextureWrap uWrap, TextureWrap vWrap) {
+                         TextureFilter magFilter, TextureWrap uWrap, TextureWrap vWrap) {
 				this.width = width;
 				this.height = height;
 				this.textureFile = handle;

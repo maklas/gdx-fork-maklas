@@ -253,7 +253,7 @@ public abstract class Camera {
 	 * @param viewportHeight the height of the viewport in pixels
 	 * @return the picking Ray. */
 	public Ray getPickRay (float screenX, float screenY, float viewportX, float viewportY, float viewportWidth,
-		float viewportHeight) {
+                           float viewportHeight) {
 		unproject(ray.origin.set(screenX, screenY, 0), viewportX, viewportY, viewportWidth, viewportHeight);
 		unproject(ray.direction.set(screenX, screenY, 1), viewportX, viewportY, viewportWidth, viewportHeight);
 		ray.direction.sub(ray.origin).nor();

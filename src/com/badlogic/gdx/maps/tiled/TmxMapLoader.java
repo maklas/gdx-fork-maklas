@@ -31,11 +31,7 @@ import com.badlogic.gdx.maps.ImageResolver.DirectImageResolver;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.IntArray;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.SerializationException;
+import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.XmlReader.Element;
 
 import java.io.IOException;
@@ -81,7 +77,7 @@ public class TmxMapLoader extends BaseTmxMapLoader<TmxMapLoader.Parameters> {
 			ObjectMap<String, Texture> textures = new ObjectMap<String, Texture>();
 			Array<FileHandle> textureFiles = loadTilesets(root, tmxFile);
 			textureFiles.addAll(loadImages(root, tmxFile));
-			
+
 			for (FileHandle textureFile : textureFiles) {
 				Texture texture = new Texture(textureFile, parameters.generateMipMaps);
 				texture.setFilter(parameters.textureMinFilter, parameters.textureMagFilter);
@@ -121,7 +117,7 @@ public class TmxMapLoader extends BaseTmxMapLoader<TmxMapLoader.Parameters> {
 	}
 
 	/** Retrieves TiledMap resource dependencies
-	 * 
+	 *
 	 * @param fileName
 	 * @param parameter not used for now
 	 * @return dependencies for the given .tmx file */
@@ -130,7 +126,7 @@ public class TmxMapLoader extends BaseTmxMapLoader<TmxMapLoader.Parameters> {
 		Array<AssetDescriptor> dependencies = new Array<AssetDescriptor>();
 		try {
 			root = xml.parse(tmxFile);
-			boolean generateMipMaps = (parameter != null ? parameter.generateMipMaps : false);
+			boolean generateMipMaps = (parameter != null && parameter.generateMipMaps);
 			TextureLoader.TextureParameter texParams = new TextureParameter();
 			texParams.genMipMaps = generateMipMaps;
 			if (parameter != null) {

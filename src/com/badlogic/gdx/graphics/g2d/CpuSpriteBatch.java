@@ -149,7 +149,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 
 	@Override
 	public void draw (Texture texture, float x, float y, float originX, float originY, float width, float height, float scaleX,
-		float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX, boolean flipY) {
+                      float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX, boolean flipY) {
 		if (!adjustNeeded) {
 			super.draw(texture, x, y, originX, originY, width, height, scaleX, scaleY, rotation, srcX, srcY, srcWidth, srcHeight,
 				flipX, flipY);
@@ -161,7 +161,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 
 	@Override
 	public void draw (Texture texture, float x, float y, float width, float height, int srcX, int srcY, int srcWidth,
-		int srcHeight, boolean flipX, boolean flipY) {
+                      int srcHeight, boolean flipX, boolean flipY) {
 		if (!adjustNeeded) {
 			super.draw(texture, x, y, width, height, srcX, srcY, srcWidth, srcHeight, flipX, flipY);
 		} else {
@@ -226,7 +226,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 
 	@Override
 	public void draw (TextureRegion region, float x, float y, float originX, float originY, float width, float height,
-		float scaleX, float scaleY, float rotation) {
+                      float scaleX, float scaleY, float rotation) {
 		if (!adjustNeeded) {
 			super.draw(region, x, y, originX, originY, width, height, scaleX, scaleY, rotation);
 		} else {
@@ -236,7 +236,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 
 	@Override
 	public void draw (TextureRegion region, float x, float y, float originX, float originY, float width, float height,
-		float scaleX, float scaleY, float rotation, boolean clockwise) {
+                      float scaleX, float scaleY, float rotation, boolean clockwise) {
 		if (!adjustNeeded) {
 			super.draw(region, x, y, originX, originY, width, height, scaleX, scaleY, rotation, clockwise);
 		} else {
@@ -265,14 +265,14 @@ public class CpuSpriteBatch extends SpriteBatch {
 	}
 
 	private void drawAdjusted (TextureRegion region, float x, float y, float originX, float originY, float width, float height,
-		float scaleX, float scaleY, float rotation) {
+                               float scaleX, float scaleY, float rotation) {
 		// v must be flipped
 		drawAdjustedUV(region.texture, x, y, originX, originY, width, height, scaleX, scaleY, rotation, region.u, region.v2,
 			region.u2, region.v, false, false);
 	}
 
 	private void drawAdjusted (Texture texture, float x, float y, float originX, float originY, float width, float height,
-		float scaleX, float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX, boolean flipY) {
+                               float scaleX, float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX, boolean flipY) {
 		float invTexWidth = 1.0f / texture.getWidth();
 		float invTexHeight = 1.0f / texture.getHeight();
 
@@ -285,7 +285,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 	}
 
 	private void drawAdjustedUV (Texture texture, float x, float y, float originX, float originY, float width, float height,
-		float scaleX, float scaleY, float rotation, float u, float v, float u2, float v2, boolean flipX, boolean flipY) {
+                                 float scaleX, float scaleY, float rotation, float u, float v, float u2, float v2, boolean flipX, boolean flipY) {
 		if (!drawing) throw new IllegalStateException("CpuSpriteBatch.begin must be called before draw.");
 
 		if (texture != lastTexture)
@@ -381,25 +381,25 @@ public class CpuSpriteBatch extends SpriteBatch {
 
 		vertices[idx + 0] = t.m00 * x1 + t.m01 * y1 + t.m02;
 		vertices[idx + 1] = t.m10 * x1 + t.m11 * y1 + t.m12;
-		vertices[idx + 2] = color;
+		vertices[idx + 2] = colorPacked;
 		vertices[idx + 3] = u;
 		vertices[idx + 4] = v;
 
 		vertices[idx + 5] = t.m00 * x2 + t.m01 * y2 + t.m02;
 		vertices[idx + 6] = t.m10 * x2 + t.m11 * y2 + t.m12;
-		vertices[idx + 7] = color;
+		vertices[idx + 7] = colorPacked;
 		vertices[idx + 8] = u;
 		vertices[idx + 9] = v2;
 
 		vertices[idx + 10] = t.m00 * x3 + t.m01 * y3 + t.m02;
 		vertices[idx + 11] = t.m10 * x3 + t.m11 * y3 + t.m12;
-		vertices[idx + 12] = color;
+		vertices[idx + 12] = colorPacked;
 		vertices[idx + 13] = u2;
 		vertices[idx + 14] = v2;
 
 		vertices[idx + 15] = t.m00 * x4 + t.m01 * y4 + t.m02;
 		vertices[idx + 16] = t.m10 * x4 + t.m11 * y4 + t.m12;
-		vertices[idx + 17] = color;
+		vertices[idx + 17] = colorPacked;
 		vertices[idx + 18] = u2;
 		vertices[idx + 19] = v;
 
@@ -407,7 +407,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 	}
 
 	private void drawAdjusted (TextureRegion region, float x, float y, float originX, float originY, float width, float height,
-		float scaleX, float scaleY, float rotation, boolean clockwise) {
+                               float scaleX, float scaleY, float rotation, boolean clockwise) {
 		if (!drawing) throw new IllegalStateException("CpuSpriteBatch.begin must be called before draw.");
 
 		if (region.texture != lastTexture)
@@ -513,25 +513,25 @@ public class CpuSpriteBatch extends SpriteBatch {
 
 		vertices[idx + 0] = t.m00 * x1 + t.m01 * y1 + t.m02;
 		vertices[idx + 1] = t.m10 * x1 + t.m11 * y1 + t.m12;
-		vertices[idx + 2] = color;
+		vertices[idx + 2] = colorPacked;
 		vertices[idx + 3] = u1;
 		vertices[idx + 4] = v1;
 
 		vertices[idx + 5] = t.m00 * x2 + t.m01 * y2 + t.m02;
 		vertices[idx + 6] = t.m10 * x2 + t.m11 * y2 + t.m12;
-		vertices[idx + 7] = color;
+		vertices[idx + 7] = colorPacked;
 		vertices[idx + 8] = u2;
 		vertices[idx + 9] = v2;
 
 		vertices[idx + 10] = t.m00 * x3 + t.m01 * y3 + t.m02;
 		vertices[idx + 11] = t.m10 * x3 + t.m11 * y3 + t.m12;
-		vertices[idx + 12] = color;
+		vertices[idx + 12] = colorPacked;
 		vertices[idx + 13] = u3;
 		vertices[idx + 14] = v3;
 
 		vertices[idx + 15] = t.m00 * x4 + t.m01 * y4 + t.m02;
 		vertices[idx + 16] = t.m10 * x4 + t.m11 * y4 + t.m12;
-		vertices[idx + 17] = color;
+		vertices[idx + 17] = colorPacked;
 		vertices[idx + 18] = u4;
 		vertices[idx + 19] = v4;
 
@@ -567,25 +567,25 @@ public class CpuSpriteBatch extends SpriteBatch {
 
 		vertices[idx + 0] = t.m00 * x1 + t.m01 * y1 + t.m02;
 		vertices[idx + 1] = t.m10 * x1 + t.m11 * y1 + t.m12;
-		vertices[idx + 2] = color;
+		vertices[idx + 2] = colorPacked;
 		vertices[idx + 3] = u;
 		vertices[idx + 4] = v;
 
 		vertices[idx + 5] = t.m00 * x2 + t.m01 * y2 + t.m02;
 		vertices[idx + 6] = t.m10 * x2 + t.m11 * y2 + t.m12;
-		vertices[idx + 7] = color;
+		vertices[idx + 7] = colorPacked;
 		vertices[idx + 8] = u;
 		vertices[idx + 9] = v2;
 
 		vertices[idx + 10] = t.m00 * x3 + t.m01 * y3 + t.m02;
 		vertices[idx + 11] = t.m10 * x3 + t.m11 * y3 + t.m12;
-		vertices[idx + 12] = color;
+		vertices[idx + 12] = colorPacked;
 		vertices[idx + 13] = u2;
 		vertices[idx + 14] = v2;
 
 		vertices[idx + 15] = t.m00 * x4 + t.m01 * y4 + t.m02;
 		vertices[idx + 16] = t.m10 * x4 + t.m11 * y4 + t.m12;
-		vertices[idx + 17] = color;
+		vertices[idx + 17] = colorPacked;
 		vertices[idx + 18] = u2;
 		vertices[idx + 19] = v;
 

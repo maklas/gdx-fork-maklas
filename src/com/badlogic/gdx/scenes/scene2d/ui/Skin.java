@@ -20,29 +20,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.BitmapFontData;
-import com.badlogic.gdx.graphics.g2d.NinePatch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasSprite;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
-import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.scenes.scene2d.utils.*;
+import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.Json.ReadOnlySerializer;
-import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.SerializationException;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Method;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
@@ -57,6 +42,12 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
 public class Skin implements Disposable {
 	ObjectMap<Class, ObjectMap<String, Object>> resources = new ObjectMap();
 	TextureAtlas atlas;
+	private final ObjectMap<String, Class> jsonClassTags = new ObjectMap(defaultTagClasses.length);
+
+	{
+		for (Class c : defaultTagClasses)
+			jsonClassTags.put(c.getSimpleName(), c);
+	}
 
 	/** Creates an empty skin. */
 	public Skin () {
@@ -106,7 +97,7 @@ public class Skin implements Disposable {
 			AtlasRegion region = regions.get(i);
 			String name = region.name;
 			if (region.index != -1) {
-			    name += "_" + region.index;
+				name += "_" + region.index;
 			}
 			add(name, region, TextureRegion.class);
 		}
@@ -421,11 +412,39 @@ public class Skin implements Disposable {
 		final Skin skin = this;
 
 		final Json json = new Json() {
+			static private final String parentFieldName = "parent";
+
 			public <T> T readValue (Class<T> type, Class elementType, JsonValue jsonData) {
 				// If the JSON is a string but the type is not, look up the actual value by name.
 				if (jsonData.isString() && !ClassReflection.isAssignableFrom(CharSequence.class, type))
 					return get(jsonData.asString(), type);
 				return super.readValue(type, elementType, jsonData);
+			}
+
+			protected boolean ignoreUnknownField (Class type, String fieldName) {
+				return fieldName.equals(parentFieldName);
+			}
+
+			public void readFields (Object object, JsonValue jsonMap) {
+				if (jsonMap.has(parentFieldName)) {
+					String parentName = readValue(parentFieldName, String.class, jsonMap);
+					Class parentType = object.getClass();
+					while (true) {
+						try {
+							copyFields(get(parentName, parentType), object);
+							break;
+						} catch (GdxRuntimeException ex) { // Parent resource doesn't exist.
+							parentType = parentType.getSuperclass(); // Try resource for super class.
+							if (parentType == Object.class) {
+								SerializationException se = new SerializationException(
+									"Unable to find parent resource with name: " + parentName);
+								se.addTrace(jsonMap.child.trace());
+								throw se;
+							}
+						}
+					}
+				}
+				super.readFields(object, jsonMap);
 			}
 		};
 		json.setTypeName(null);
@@ -435,7 +454,9 @@ public class Skin implements Disposable {
 			public Skin read (Json json, JsonValue typeToValueMap, Class ignored) {
 				for (JsonValue valueMap = typeToValueMap.child; valueMap != null; valueMap = valueMap.next) {
 					try {
-						readNamedObjects(json, ClassReflection.forName(valueMap.name()), valueMap);
+						Class type = json.getClass(valueMap.name());
+						if (type == null) type = ClassReflection.forName(valueMap.name());
+						readNamedObjects(json, type, valueMap);
 					} catch (ReflectionException ex) {
 						throw new SerializationException(ex);
 					}
@@ -526,8 +547,26 @@ public class Skin implements Disposable {
 			}
 		});
 
+		for (ObjectMap.Entry<String, Class> entry : jsonClassTags)
+			json.addClassTag(entry.key, entry.value);
+
 		return json;
 	}
+
+	/** Returns a map of {@link Json#addClassTag(String, Class) class tags} that will be used when loading skin JSON. The map can
+	 * be modified before calling {@link #load(FileHandle)}. By default the map is populated with the simple class names of libGDX
+	 * classes commonly used in skins. */
+	public ObjectMap<String, Class> getJsonClassTags () {
+		return jsonClassTags;
+	}
+
+	static private final Class[] defaultTagClasses = {BitmapFont.class, Color.class, TintedDrawable.class, NinePatchDrawable.class,
+		SpriteDrawable.class, TextureRegionDrawable.class, TiledDrawable.class, Button.ButtonStyle.class,
+		CheckBox.CheckBoxStyle.class, ImageButton.ImageButtonStyle.class, ImageTextButton.ImageTextButtonStyle.class,
+		Label.LabelStyle.class, List.ListStyle.class, ProgressBar.ProgressBarStyle.class, ScrollPane.ScrollPaneStyle.class,
+		SelectBox.SelectBoxStyle.class, Slider.SliderStyle.class, SplitPane.SplitPaneStyle.class, TextButton.TextButtonStyle.class,
+		TextField.TextFieldStyle.class, TextTooltip.TextTooltipStyle.class, Touchpad.TouchpadStyle.class, Tree.TreeStyle.class,
+		Window.WindowStyle.class};
 
 	static private Method findMethod (Class type, String name) {
 		Method[] methods = ClassReflection.getMethods(type);

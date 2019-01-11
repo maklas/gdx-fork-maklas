@@ -69,7 +69,7 @@ public class SpotLight extends BaseLight<SpotLight> {
 	}
 
 	public SpotLight set (final Color color, final Vector3 position, final Vector3 direction, final float intensity,
-		final float cutoffAngle, final float exponent) {
+                          final float cutoffAngle, final float exponent) {
 		if (color != null) this.color.set(color);
 		if (position != null) this.position.set(position);
 		if (direction != null) this.direction.set(direction).nor();
@@ -80,7 +80,7 @@ public class SpotLight extends BaseLight<SpotLight> {
 	}
 
 	public SpotLight set (final float r, final float g, final float b, final Vector3 position, final Vector3 direction,
-		final float intensity, final float cutoffAngle, final float exponent) {
+                          final float intensity, final float cutoffAngle, final float exponent) {
 		this.color.set(r, g, b, 1f);
 		if (position != null) this.position.set(position);
 		if (direction != null) this.direction.set(direction).nor();
@@ -91,7 +91,7 @@ public class SpotLight extends BaseLight<SpotLight> {
 	}
 
 	public SpotLight set (final Color color, final float posX, final float posY, final float posZ, final float dirX,
-		final float dirY, final float dirZ, final float intensity, final float cutoffAngle, final float exponent) {
+                          final float dirY, final float dirZ, final float intensity, final float cutoffAngle, final float exponent) {
 		if (color != null) this.color.set(color);
 		this.position.set(posX, posY, posZ);
 		this.direction.set(dirX, dirY, dirZ).nor();
@@ -102,7 +102,7 @@ public class SpotLight extends BaseLight<SpotLight> {
 	}
 
 	public SpotLight set (final float r, final float g, final float b, final float posX, final float posY, final float posZ,
-		final float dirX, final float dirY, final float dirZ, final float intensity, final float cutoffAngle, final float exponent) {
+                          final float dirX, final float dirY, final float dirZ, final float intensity, final float cutoffAngle, final float exponent) {
 		this.color.set(r, g, b, 1f);
 		this.position.set(posX, posY, posZ);
 		this.direction.set(dirX, dirY, dirZ).nor();
@@ -119,7 +119,7 @@ public class SpotLight extends BaseLight<SpotLight> {
 
 	@Override
 	public boolean equals (Object obj) {
-		return (obj instanceof SpotLight) ? equals((SpotLight)obj) : false;
+		return (obj instanceof SpotLight) && equals((SpotLight) obj);
 	}
 
 	public boolean equals (SpotLight other) {

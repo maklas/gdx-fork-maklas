@@ -41,12 +41,12 @@ public class AnimationController extends BaseAnimationController {
 	public interface AnimationListener {
 		/** Gets called when an animation is completed.
 		 * @param animation The animation which just completed. */
-		void onEnd (final AnimationDesc animation);
+		void onEnd(final AnimationDesc animation);
 
 		/** Gets called when an animation is looped. The {@link AnimationDesc#loopCount} is updated prior to this call and can be
 		 * read or written to alter the number of remaining loops.
 		 * @param animation The animation which just looped. */
-		void onLoop (final AnimationDesc animation);
+		void onLoop(final AnimationDesc animation);
 	}
 
 	/** Class describing how to play and {@link Animation}. You can read the values within this class to get the progress of the
@@ -138,7 +138,7 @@ public class AnimationController extends BaseAnimationController {
 	}
 
 	private AnimationDesc obtain (final Animation anim, float offset, float duration, int loopCount, float speed,
-		final AnimationListener listener) {
+                                  final AnimationListener listener) {
 		if (anim == null) return null;
 		final AnimationDesc result = animationPool.obtain();
 		result.animation = anim;
@@ -264,7 +264,7 @@ public class AnimationController extends BaseAnimationController {
 
 	/** Set the active animation, replacing any current animation. */
 	protected AnimationDesc setAnimation (final Animation anim, float offset, float duration, int loopCount, float speed,
-		final AnimationListener listener) {
+                                          final AnimationListener listener) {
 		return setAnimation(obtain(anim, offset, duration, loopCount, speed, listener));
 	}
 
@@ -351,7 +351,7 @@ public class AnimationController extends BaseAnimationController {
 
 	/** Changes the current animation by blending the new on top of the old during the transition time. */
 	protected AnimationDesc animate (final Animation anim, float offset, float duration, int loopCount, float speed,
-		final AnimationListener listener, float transitionTime) {
+                                     final AnimationListener listener, float transitionTime) {
 		return animate(obtain(anim, offset, duration, loopCount, speed, listener), transitionTime);
 	}
 
@@ -415,7 +415,7 @@ public class AnimationController extends BaseAnimationController {
 
 	/** Queue an animation to be applied when the current is finished. If current is continuous it will be synced on next loop. */
 	protected AnimationDesc queue (final Animation anim, float offset, float duration, int loopCount, float speed,
-		final AnimationListener listener, float transitionTime) {
+                                   final AnimationListener listener, float transitionTime) {
 		return queue(obtain(anim, offset, duration, loopCount, speed, listener), transitionTime);
 	}
 
@@ -468,7 +468,7 @@ public class AnimationController extends BaseAnimationController {
 
 	/** Apply an action animation on top of the current animation. */
 	protected AnimationDesc action (final Animation anim, float offset, float duration, int loopCount, float speed,
-		final AnimationListener listener, float transitionTime) {
+                                    final AnimationListener listener, float transitionTime) {
 		return action(obtain(anim, offset, duration, loopCount, speed, listener), transitionTime);
 	}
 

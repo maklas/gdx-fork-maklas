@@ -20,11 +20,7 @@ import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g3d.Attribute;
-import com.badlogic.gdx.graphics.g3d.Attributes;
-import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.Renderable;
-import com.badlogic.gdx.graphics.g3d.Shader;
+import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.DepthTestAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
@@ -168,7 +164,7 @@ public class ParticleShader extends BaseShader {
 
 			@Override
 			public void set (BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-				shader.set(inputID, (float)Gdx.graphics.getWidth());
+				shader.set(inputID, (float) Gdx.graphics.getWidth());
 			}
 		};
 		public final static Setter worldViewTrans = new Setter() {
@@ -208,7 +204,7 @@ public class ParticleShader extends BaseShader {
 	}
 
 	public ParticleShader (final Renderable renderable, final Config config, final String prefix, final String vertexShader,
-		final String fragmentShader) {
+                           final String fragmentShader) {
 		this(renderable, config, new ShaderProgram(prefix + vertexShader, prefix + fragmentShader));
 	}
 
@@ -276,7 +272,7 @@ public class ParticleShader extends BaseShader {
 
 	@Override
 	public boolean equals (Object obj) {
-		return (obj instanceof ParticleShader) ? equals((ParticleShader)obj) : false;
+		return (obj instanceof ParticleShader) && equals((ParticleShader) obj);
 	}
 
 	public boolean equals (ParticleShader obj) {

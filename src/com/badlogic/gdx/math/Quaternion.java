@@ -16,9 +16,9 @@
 
 package com.badlogic.gdx.math;
 
-import java.io.Serializable;
-
 import com.badlogic.gdx.utils.NumberUtils;
+
+import java.io.Serializable;
 
 /** A simple quaternion class.
  * @see <a href="http://en.wikipedia.org/wiki/Quaternion">http://en.wikipedia.org/wiki/Quaternion</a>
@@ -494,7 +494,7 @@ public class Quaternion implements Serializable {
 	 * @param zy z-axis y-coordinate
 	 * @param zz z-axis z-coordinate */
 	public Quaternion setFromAxes (boolean normalizeAxes, float xx, float xy, float xz, float yx, float yy, float yz, float zx,
-		float zy, float zz) {
+                                   float zy, float zz) {
 		if (normalizeAxes) {
 			final float lx = 1f / Vector3.len(xx, xy, xz);
 			final float ly = 1f / Vector3.len(yx, yy, yz);

@@ -16,16 +16,10 @@
 
 package com.badlogic.gdx.net;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
-
 import com.badlogic.gdx.Net.Protocol;
-import com.badlogic.gdx.net.ServerSocket;
-import com.badlogic.gdx.net.ServerSocketHints;
-import com.badlogic.gdx.net.Socket;
-import com.badlogic.gdx.net.SocketHints;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+
+import java.net.InetSocketAddress;
 
 /** Server socket implementation using java.net.ServerSocket.
  * 

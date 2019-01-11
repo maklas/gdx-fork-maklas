@@ -16,9 +16,6 @@
 
 package com.badlogic.gdx.graphics.glutils;
 
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttribute;
@@ -26,12 +23,15 @@ import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+
 /** <p>
  * A {@link VertexData} implementation based on OpenGL vertex buffer objects.
  * <p>
  * If the OpenGL ES context was lost you can call {@link #invalidate()} to recreate a new OpenGL vertex buffer object.
  * <p>
- * The data is bound via glVertexAttribPointer() according to the attribute aliases specified via {@link VertexAttributes} 
+ * The data is bound via glVertexAttribPointer() according to the attribute aliases specified via {@link VertexAttributes}
  * in the constructor.
  * <p>
  * VertexBufferObjects must be disposed via the {@link #dispose()} method when no longer needed

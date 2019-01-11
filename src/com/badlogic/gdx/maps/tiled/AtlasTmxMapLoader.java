@@ -16,8 +16,6 @@
 
 package com.badlogic.gdx.maps.tiled;
 
-import java.io.IOException;
-
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
@@ -30,12 +28,10 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.IntArray;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.SerializationException;
+import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.XmlReader.Element;
+
+import java.io.IOException;
 
 /** A TiledMap Loader which loads tiles from a TextureAtlas instead of separate images.
  * 
@@ -56,7 +52,7 @@ public class AtlasTmxMapLoader extends BaseTmxMapLoader<AtlasTmxMapLoader.AtlasT
 
 	private interface AtlasResolver {
 
-		public TextureAtlas getAtlas (String name);
+		public TextureAtlas getAtlas(String name);
 
 		public static class DirectAtlasResolver implements AtlasResolver {
 

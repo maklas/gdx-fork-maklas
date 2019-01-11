@@ -75,7 +75,7 @@ None of implementations is changed. Only added new functions and classes for an 
 so that something like this could be possible:
 
 
-Item item = getItemIds()  
+Item randomItemCanBeBought = getItemIds()  
     .map(id -> inventory.getItem(id))  
     .filter(ItemUtils::canBeBought)  
     .sortAndRet(sortType.getComparator())  

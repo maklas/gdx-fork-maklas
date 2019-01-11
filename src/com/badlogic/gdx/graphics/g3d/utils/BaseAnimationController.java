@@ -141,7 +141,7 @@ public class BaseAnimationController {
 
 	/** Apply two animations, blending the second onto to first using weight. */
 	protected void applyAnimations (final Animation anim1, final float time1, final Animation anim2, final float time2,
-		final float weight) {
+                                    final float weight) {
 		if (anim2 == null || weight == 0.f)
 			applyAnimation(anim1, time1);
 		else if (anim1 == null || weight == 1.f)
@@ -232,7 +232,7 @@ public class BaseAnimationController {
 	}
 
 	private final static void applyNodeAnimationBlending (final NodeAnimation nodeAnim, final ObjectMap<Node, Transform> out,
-		final Pool<Transform> pool, final float alpha, final float time) {
+                                                          final Pool<Transform> pool, final float alpha, final float time) {
 
 		final Node node = nodeAnim.node;
 		node.isAnimated = true;
@@ -254,7 +254,7 @@ public class BaseAnimationController {
 
 	/** Helper method to apply one animation to either an objectmap for blending or directly to the bones. */
 	protected static void applyAnimation (final ObjectMap<Node, Transform> out, final Pool<Transform> pool, final float alpha,
-		final Animation animation, final float time) {
+                                          final Animation animation, final float time) {
 
 		if (out == null) {
 			for (final NodeAnimation nodeAnim : animation.nodeAnimations)

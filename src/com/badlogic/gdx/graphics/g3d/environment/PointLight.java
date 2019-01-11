@@ -64,7 +64,7 @@ public class PointLight extends BaseLight<PointLight> {
 	}
 
 	public PointLight set (final float r, final float g, final float b, final float x, final float y, final float z,
-		final float intensity) {
+                           final float intensity) {
 		this.color.set(r, g, b, 1f);
 		this.position.set(x, y, z);
 		this.intensity = intensity;
@@ -73,7 +73,7 @@ public class PointLight extends BaseLight<PointLight> {
 
 	@Override
 	public boolean equals (Object obj) {
-		return (obj instanceof PointLight) ? equals((PointLight)obj) : false;
+		return (obj instanceof PointLight) && equals((PointLight) obj);
 	}
 
 	public boolean equals (PointLight other) {

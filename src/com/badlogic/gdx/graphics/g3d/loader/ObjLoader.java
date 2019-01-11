@@ -16,10 +16,6 @@
 
 package com.badlogic.gdx.graphics.g3d.loader;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
@@ -32,18 +28,16 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Attributes;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
-import com.badlogic.gdx.graphics.g3d.model.data.ModelData;
-import com.badlogic.gdx.graphics.g3d.model.data.ModelMaterial;
-import com.badlogic.gdx.graphics.g3d.model.data.ModelMesh;
-import com.badlogic.gdx.graphics.g3d.model.data.ModelMeshPart;
-import com.badlogic.gdx.graphics.g3d.model.data.ModelNode;
-import com.badlogic.gdx.graphics.g3d.model.data.ModelNodePart;
-import com.badlogic.gdx.graphics.g3d.model.data.ModelTexture;
+import com.badlogic.gdx.graphics.g3d.model.data.*;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /** {@link ModelLoader} to load Wavefront OBJ files. Only intended for testing basic models/meshes and educational usage. The
  * Wavefront specification is NOT fully implemented, only a subset of the specification is supported. Especially the
@@ -97,7 +91,7 @@ public class ObjLoader extends ModelLoader<ObjLoader.ObjLoaderParameters> {
 
 	@Override
 	public ModelData loadModelData (FileHandle file, ObjLoaderParameters parameters) {
-		return loadModelData(file, parameters == null ? false : parameters.flipV);
+		return loadModelData(file, parameters != null && parameters.flipV);
 	}
 
 	protected ModelData loadModelData (FileHandle file, boolean flipV) {
@@ -340,7 +334,7 @@ class MtlLoader {
 		float shininess = 0.f;
 		String texFilename = null;
 
-		if (file == null || file.exists() == false) return;
+		if (file == null || !file.exists()) return;
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(file.read()), 4096);
 		try {

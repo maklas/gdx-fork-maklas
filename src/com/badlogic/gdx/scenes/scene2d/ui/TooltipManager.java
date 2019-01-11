@@ -16,9 +16,6 @@
 
 package com.badlogic.gdx.scenes.scene2d.ui;
 
-import static com.badlogic.gdx.math.Interpolation.*;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
-
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Interpolation;
@@ -26,6 +23,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
+
+import static com.badlogic.gdx.math.Interpolation.fade;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 /** Keeps track of an application's tooltips.
  * @author Nathan Sweet */
@@ -64,7 +64,7 @@ public class TooltipManager {
 	Tooltip showTooltip;
 	final Task showTask = new Task() {
 		public void run () {
-			if (showTooltip == null) return;
+			if (showTooltip == null || showTooltip.targetActor == null) return;
 
 			Stage stage = showTooltip.targetActor.getStage();
 			if (stage == null) return;

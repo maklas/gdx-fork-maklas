@@ -22,6 +22,6 @@ public interface Shape2D {
 	boolean contains (Vector2 point);
 
 	/** Returns whether a point with the given coordinates is contained within the shape. */
-	boolean contains (float x, float y);
+	boolean contains(float x, float y);
 
 }

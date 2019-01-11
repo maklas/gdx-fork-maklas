@@ -485,7 +485,7 @@ public class ShapeRenderer implements Disposable {
 	 * @param col3 The color at (x + width, y + height)
 	 * @param col4 The color at (x, y + height) */
 	public void rect (float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY,
-		float degrees, Color col1, Color col2, Color col3, Color col4) {
+                      float degrees, Color col1, Color col2, Color col3, Color col4) {
 		check(ShapeType.Line, ShapeType.Filled, 8);
 
 		float cos = MathUtils.cosDeg(degrees);

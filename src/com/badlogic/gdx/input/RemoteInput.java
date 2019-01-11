@@ -48,9 +48,9 @@ import com.badlogic.gdx.utils.IntSet;
  * @author mzechner */
 public class RemoteInput implements Runnable, Input {
 	public interface RemoteInputListener {
-		void onConnected ();
+		void onConnected();
 
-		void onDisconnected ();
+		void onDisconnected();
 	}
 
 	class KeyEvent {
@@ -275,7 +275,7 @@ public class RemoteInput implements Runnable, Input {
 					case RemoteSender.SIZE:
 						remoteWidth = in.readFloat();
 						remoteHeight = in.readFloat();
-						break;	
+						break;
 					case RemoteSender.GYRO:
 						gyrate[0] = in.readFloat();
 						gyrate[1] = in.readFloat();
@@ -345,7 +345,7 @@ public class RemoteInput implements Runnable, Input {
 	public float getAccelerometerZ () {
 		return accel[2];
 	}
-	
+
 	@Override
 	public float getGyroscopeX () {
 		return gyrate[0];
@@ -394,6 +394,16 @@ public class RemoteInput implements Runnable, Input {
 	@Override
 	public boolean isTouched (int pointer) {
 		return isTouched[pointer];
+	}
+
+	@Override
+	public float getPressure () {
+		return getPressure(0);
+	}
+
+	@Override
+	public float getPressure (int pointer) {
+		return isTouched(pointer) ? 1 : 0;
 	}
 
 	@Override

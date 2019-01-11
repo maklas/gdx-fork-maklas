@@ -16,13 +16,13 @@
 
 package com.badlogic.gdx.graphics.glutils;
 
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.utils.BufferUtils;
+
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 
 /** <p>
  * Convenience class for working with OpenGL vertex arrays. It interleaves all data in the order you specified in the constructor

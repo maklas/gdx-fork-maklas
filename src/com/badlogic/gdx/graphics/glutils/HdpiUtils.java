@@ -17,7 +17,6 @@
 package com.badlogic.gdx.graphics.glutils;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics.GraphicsType;
 import com.badlogic.gdx.graphics.GL20;
 
 /** To deal with HDPI monitors properly, use the glViewport and glScissor functions of this class instead of directly calling
@@ -54,7 +53,7 @@ public class HdpiUtils {
 	 * logical screen coordinates.
 	 */
 	public static int toLogicalX(int backBufferX) {
-		return (int)(backBufferX * Gdx.graphics.getWidth() / (float)Gdx.graphics.getBackBufferWidth());
+		return (int)(backBufferX * Gdx.graphics.getWidth() / (float) Gdx.graphics.getBackBufferWidth());
 	}
 
 	/**
@@ -62,7 +61,7 @@ public class HdpiUtils {
 	 * logical screen coordinates
 	 */
 	public static int toLogicalY(int backBufferY) {
-		return (int)(backBufferY * Gdx.graphics.getHeight() / (float)Gdx.graphics.getBackBufferHeight());
+		return (int)(backBufferY * Gdx.graphics.getHeight() / (float) Gdx.graphics.getBackBufferHeight());
 	}
 	
 	/**
@@ -70,7 +69,7 @@ public class HdpiUtils {
 	 * backbuffer coordinates.
 	 */
 	public static int toBackBufferX(int logicalX) {
-		return (int)(logicalX * Gdx.graphics.getBackBufferWidth() / (float)Gdx.graphics.getWidth());
+		return (int)(logicalX * Gdx.graphics.getBackBufferWidth() / (float) Gdx.graphics.getWidth());
 	}
 
 	/**
@@ -78,6 +77,6 @@ public class HdpiUtils {
 	 * logical screen coordinates
 	 */
 	public static int toBackBufferY(int logicalY) {
-		return (int)(logicalY * Gdx.graphics.getBackBufferHeight() / (float)Gdx.graphics.getHeight());
+		return (int)(logicalY * Gdx.graphics.getBackBufferHeight() / (float) Gdx.graphics.getHeight());
 	}
 }

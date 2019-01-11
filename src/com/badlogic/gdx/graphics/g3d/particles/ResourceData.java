@@ -18,12 +18,7 @@ package com.badlogic.gdx.graphics.g3d.particles;
 
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.IntArray;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
@@ -129,7 +124,7 @@ public class ResourceData<T> implements Json.Serializable {
 			filename = json.readValue("filename", String.class, jsonData);
 			String className = json.readValue("type", String.class, jsonData);
 			try {
-				type = (Class<T>)ClassReflection.forName(className);
+				type = (Class<T>) ClassReflection.forName(className);
 			} catch (ReflectionException e) {
 				throw new GdxRuntimeException("Class not found: " + className, e);
 			}

@@ -16,8 +16,6 @@
 
 package com.badlogic.gdx.utils;
 
-import java.nio.ByteBuffer;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -25,6 +23,8 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+
+import java.nio.ByteBuffer;
 
 /** Class with static helper methods that provide access to the default OpenGL FrameBuffer. These methods can be used to get the
  * entire screen content or a portion thereof.

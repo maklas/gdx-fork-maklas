@@ -16,13 +16,13 @@
 
 package com.badlogic.gdx.net;
 
-import java.io.InputStream;
-import java.util.Map;
-
 import com.badlogic.gdx.Net.HttpRequest;
 import com.badlogic.gdx.utils.Base64Coder;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Pools;
+
+import java.io.InputStream;
+import java.util.Map;
 
 /** A builder for {@link HttpRequest}s.
  * 
@@ -108,7 +108,7 @@ public class HttpRequestBuilder {
 		return this;
 	}
 
-	/** @see HttpRequest#setContent(java.io.InputStream, long) */
+	/** @see HttpRequest#setContent(InputStream, long) */
 	public HttpRequestBuilder content (InputStream contentStream, long contentLength) {
 		validate();
 		httpRequest.setContent(contentStream, contentLength);

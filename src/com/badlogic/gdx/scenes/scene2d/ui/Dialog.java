@@ -16,24 +16,19 @@
 
 package com.badlogic.gdx.scenes.scene2d.ui;
 
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.viewport.Viewport;
+
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 /** Displays a dialog, which is a modal window containing a content table with a button table underneath it. Methods are provided
  * to add a label to the content table and buttons to the button table, but any widgets can be added. When a button is clicked,
@@ -184,7 +179,10 @@ public class Dialog extends Window {
 		return this;
 	}
 
-	/** {@link #pack() Packs} the dialog and adds it to the stage with custom action which can be null for instant show */
+	/** {@link #pack() Packs} the dialog (but doesn't set the position), adds it to the stage, sets it as the keyboard and scroll
+	 * focus, clears any actions on the dialog, and adds the specified action to it. The previous keyboard and scroll focus are
+	 * remembered so they can be restored when the dialog is hidden.
+	 * @param action May be null. */
 	public Dialog show (Stage stage, Action action) {
 		clearActions();
 		removeCaptureListener(ignoreTouchDown);
@@ -207,14 +205,18 @@ public class Dialog extends Window {
 		return this;
 	}
 
-	/** {@link #pack() Packs} the dialog and adds it to the stage, centered with default fadeIn action */
+	/** Centers the dialog in the stage and calls {@link #show(Stage, Action)} with a {@link Actions#fadeIn(float, Interpolation)}
+	 * action. */
 	public Dialog show (Stage stage) {
 		show(stage, sequence(Actions.alpha(0), Actions.fadeIn(0.4f, Interpolation.fade)));
 		setPosition(Math.round((stage.getWidth() - getWidth()) / 2), Math.round((stage.getHeight() - getHeight()) / 2));
 		return this;
 	}
 
-	/** Hides the dialog with the given action and then removes it from the stage. */
+	/** Removes the dialog from the stage, restoring the previous keyboard and scroll focus, and adds the specified action to the
+	 * dialog.
+	 * @param action If null, the dialog is removed immediately. Otherwise, the dialog is removed when the action completes. The
+	 *           dialog will not respond to touch down events during the action. */
 	public void hide (Action action) {
 		Stage stage = getStage();
 		if (stage != null) {

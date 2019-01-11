@@ -119,7 +119,7 @@ public class ScissorStack {
 	 * @param area the {@link Rectangle} to transform to window coordinates
 	 * @param scissor the Rectangle to store the result in */
 	public static void calculateScissors (Camera camera, float viewportX, float viewportY, float viewportWidth,
-		float viewportHeight, Matrix4 batchTransform, Rectangle area, Rectangle scissor) {
+                                          float viewportHeight, Matrix4 batchTransform, Rectangle area, Rectangle scissor) {
 		tmp.set(area.x, area.y, 0);
 		tmp.mul(batchTransform);
 		camera.project(tmp, viewportX, viewportY, viewportWidth, viewportHeight);

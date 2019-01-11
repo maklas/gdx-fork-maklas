@@ -247,7 +247,7 @@ public class Pixmap implements Disposable {
 	 * @param dstWidth The target width
 	 * @param dstHeight the target height */
 	public void drawPixmap (Pixmap pixmap, int srcx, int srcy, int srcWidth, int srcHeight, int dstx, int dsty, int dstWidth,
-		int dstHeight) {
+                            int dstHeight) {
 		this.pixmap.drawPixmap(pixmap.pixmap, srcx, srcy, srcWidth, srcHeight, dstx, dsty, dstWidth, dstHeight);
 	}
 
@@ -316,6 +316,10 @@ public class Pixmap implements Disposable {
 		if (disposed) throw new GdxRuntimeException("Pixmap already disposed!");
 		pixmap.dispose();
 		disposed = true;
+	}
+
+	public boolean isDisposed () {
+		return disposed;
 	}
 
 	/** Draws a pixel at the given location with the current color.

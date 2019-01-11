@@ -16,8 +16,6 @@
 
 package com.badlogic.gdx.graphics.g3d.particles;
 
-import java.util.Arrays;
-
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.reflect.ArrayReflection;
@@ -63,7 +61,7 @@ public class ParallelArray {
 
 	/** This interface is used to provide custom initialization of the {@link Channel} data */
 	public static interface ChannelInitializer<T extends Channel> {
-		public void init (T channel);
+		public void init(T channel);
 	}
 
 	public class FloatChannel extends Channel {
@@ -168,7 +166,7 @@ public class ParallelArray {
 
 		@Override
 		public void setCapacity (int requiredCapacity) {
-			T[] newData = (T[])ArrayReflection.newInstance(componentType, strideSize * requiredCapacity);
+			T[] newData = (T[]) ArrayReflection.newInstance(componentType, strideSize * requiredCapacity);
 			System.arraycopy(data, 0, newData, 0, Math.min(data.length, newData.length));
 			super.data = data = newData;
 		}

@@ -16,10 +16,10 @@
 
 package com.badlogic.gdx.utils.compression.lzma;
 
-import java.io.IOException;
-
 import com.badlogic.gdx.utils.compression.lz.OutWindow;
 import com.badlogic.gdx.utils.compression.rangecoder.BitTreeDecoder;
+
+import java.io.IOException;
 
 public class Decoder {
 	class LenDecoder {

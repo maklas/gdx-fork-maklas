@@ -16,10 +16,9 @@
 
 package com.badlogic.gdx.math.collision;
 
-import java.io.Serializable;
-
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.NumberUtils;
+
+import java.io.Serializable;
 
 /** A Segment is a line in 3-space having a staring and an ending position.
  * 

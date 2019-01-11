@@ -24,7 +24,7 @@ import com.badlogic.gdx.graphics.g3d.particles.batches.ParticleBatch;
  * particle renderer.
  * @author Inferno */
 public abstract class ParticleControllerRenderer<D extends ParticleControllerRenderData, T extends ParticleBatch<D>> extends
-	ParticleControllerComponent {
+        ParticleControllerComponent {
 	protected T batch;
 	protected D renderData;
 

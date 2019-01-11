@@ -16,29 +16,16 @@
 
 package com.badlogic.gdx.utils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.security.AccessControlException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.JsonValue.PrettyPrintSettings;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.OrderedMap.OrderedMapValues;
-import com.badlogic.gdx.utils.reflect.ArrayReflection;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.badlogic.gdx.utils.reflect.Constructor;
-import com.badlogic.gdx.utils.reflect.Field;
-import com.badlogic.gdx.utils.reflect.ReflectionException;
+import com.badlogic.gdx.utils.reflect.*;
+
+import java.io.*;
+import java.security.AccessControlException;
+import java.util.*;
 
 /** Reads/writes Java objects to/from JSON, automatically. See the wiki for usage:
  * https://github.com/libgdx/libgdx/wiki/Reading-%26-writing-JSON
@@ -75,6 +62,10 @@ public class Json {
 	 * false. */
 	public void setIgnoreUnknownFields (boolean ignoreUnknownFields) {
 		this.ignoreUnknownFields = ignoreUnknownFields;
+	}
+
+	public boolean getIgnoreUnknownFields () {
+		return ignoreUnknownFields;
 	}
 
 	/** When true, fields with the {@link Deprecated} annotation will not be serialized. */
@@ -799,7 +790,7 @@ public class Json {
 			FieldMetadata metadata = fields.get(child.name().replace(" ", "_"));
 			if (metadata == null) {
 				if (child.name.equals(typeName)) continue;
-				if (ignoreUnknownFields) {
+				if (ignoreUnknownFields || ignoreUnknownField(type, child.name)) {
 					if (debug) System.out.println("Ignoring unknown field: " + child.name + " (" + type.getName() + ")");
 					continue;
 				} else {
@@ -824,6 +815,16 @@ public class Json {
 				throw ex;
 			}
 		}
+	}
+
+	/** Called for each unknown field name encountered by {@link #readFields(Object, JsonValue)} when {@link #ignoreUnknownFields}
+	 * is false to determine whether the unknown field name should be ignored.
+	 * @param type The object type being read.
+	 * @param fieldName A field name encountered in the JSON for which there is no matching class field.
+	 * @return true if the field name should be ignored and an exception won't be thrown by
+	 *         {@link #readFields(Object, JsonValue)}. */
+	protected boolean ignoreUnknownField (Class type, String fieldName) {
+		return false;
 	}
 
 	/** @param type May be null if the type is unknown.
@@ -881,7 +882,7 @@ public class Json {
 				type = getClass(className);
 				if (type == null) {
 					try {
-						type = (Class<T>)ClassReflection.forName(className);
+						type = (Class<T>) ClassReflection.forName(className);
 					} catch (ReflectionException ex) {
 						throw new SerializationException(ex);
 					}
@@ -1041,6 +1042,23 @@ public class Json {
 		return null;
 	}
 
+	/** Each field on the <code>to</code> object is set to the value for the field with the same name on the <code>from</code>
+	 * object. The <code>to</code> object must have at least all the fields of the <code>from</code> object with the same name and
+	 * type. */
+	public void copyFields (Object from, Object to) {
+		ObjectMap<String, FieldMetadata> toFields = getFields(from.getClass());
+		for (ObjectMap.Entry<String, FieldMetadata> entry: getFields(from.getClass())) {
+			FieldMetadata toField = toFields.get(entry.key);
+			Field fromField = entry.value.field;
+			if (toField == null) throw new SerializationException("To object is missing field" + entry.key);
+			try {
+				toField.field.set(to, fromField.get(from));
+			} catch (ReflectionException ex) {
+				throw new SerializationException("Error copying field: " + fromField.getName(), ex);
+			}
+		}
+	}
+
 	private String convertToString (Enum e) {
 		return enumNames ? e.name() : e.toString();
 	}
@@ -1104,7 +1122,7 @@ public class Json {
 	}
 
 	static private class FieldMetadata {
-		Field field;
+		final Field field;
 		Class elementType;
 
 		public FieldMetadata (Field field) {

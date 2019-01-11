@@ -166,7 +166,7 @@ public class Matrix4 implements Serializable {
 	 * @param quaternionW The W component of the quaternion that is to be used to set this matrix.
 	 * @return This matrix for the purpose of chaining methods together. */
 	public Matrix4 set (float translationX, float translationY, float translationZ, float quaternionX, float quaternionY,
-		float quaternionZ, float quaternionW) {
+                        float quaternionZ, float quaternionW) {
 		final float xs = quaternionX * 2f, ys = quaternionY * 2f, zs = quaternionZ * 2f;
 		final float wx = quaternionW * xs, wy = quaternionW * ys, wz = quaternionW * zs;
 		final float xx = quaternionX * xs, xy = quaternionX * ys, xz = quaternionX * zs;
@@ -218,7 +218,7 @@ public class Matrix4 implements Serializable {
 	 * @param scaleZ The Z component of the scaling that is to be used to set this matrix.
 	 * @return This matrix for the purpose of chaining methods together. */
 	public Matrix4 set (float translationX, float translationY, float translationZ, float quaternionX, float quaternionY,
-		float quaternionZ, float quaternionW, float scaleX, float scaleY, float scaleZ) {
+                        float quaternionZ, float quaternionW, float scaleX, float scaleY, float scaleZ) {
 		final float xs = quaternionX * 2f, ys = quaternionY * 2f, zs = quaternionZ * 2f;
 		final float wx = quaternionW * xs, wy = quaternionW * ys, wz = quaternionW * zs;
 		final float xx = quaternionX * xs, xy = quaternionX * ys, xz = quaternionX * zs;
@@ -687,7 +687,7 @@ public class Matrix4 implements Serializable {
 	 * @param scalingZ The x-component of the scaling vector
 	 * @return This matrix for the purpose of chaining methods together. */
 	public Matrix4 setToTranslationAndScaling (float translationX, float translationY, float translationZ, float scalingX,
-		float scalingY, float scalingZ) {
+                                               float scalingY, float scalingZ) {
 		idt();
 		val[M03] = translationX;
 		val[M13] = translationY;

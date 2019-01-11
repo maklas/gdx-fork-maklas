@@ -16,36 +16,15 @@
 
 package com.badlogic.gdx.graphics.g3d.utils;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Mesh;
-import com.badlogic.gdx.graphics.VertexAttribute;
-import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.model.MeshPart;
-import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.ArrowShapeBuilder;
-import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.BoxShapeBuilder;
-import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.CapsuleShapeBuilder;
-import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.ConeShapeBuilder;
-import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.CylinderShapeBuilder;
-import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.EllipseShapeBuilder;
-import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.PatchShapeBuilder;
-import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.SphereShapeBuilder;
+import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.*;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Matrix3;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.math.collision.BoundingBox;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.FloatArray;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.IntIntMap;
-import com.badlogic.gdx.utils.NumberUtils;
-import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.ShortArray;
+import com.badlogic.gdx.utils.*;
 
 /** Class to construct a mesh, optionally splitting it into one or more mesh parts. Before you can call any other method you must
  * call {@link #begin(VertexAttributes)} or {@link #begin(VertexAttributes, int)}. To use mesh parts you must call
@@ -377,7 +356,8 @@ public class MeshBuilder implements MeshPartBuilder {
 
 	@Override
 	public void setVertexTransform (Matrix4 transform) {
-		if ((vertexTransformationEnabled = (transform != null)) == true) {
+		vertexTransformationEnabled = transform != null;
+		if (vertexTransformationEnabled) {
 			positionTransform.set(transform);
 			normalTransform.set(transform).inv().transpose();
 		} else {
@@ -521,8 +501,8 @@ public class MeshBuilder implements MeshPartBuilder {
 				vertices.items[o + colOffset + 2] *= color.b;
 				if (colSize > 3) vertices.items[o + colOffset + 3] *= color.a;
 			} else if (cpOffset >= 0) {
-				vertices.items[o + cpOffset] = tempC1.set(NumberUtils.floatToIntColor(vertices.items[o + cpOffset])).mul(color)
-					.toFloatBits();
+				Color.abgr8888ToColor(tempC1, vertices.items[o + cpOffset]);
+				vertices.items[o + cpOffset] = tempC1.mul(color).toFloatBits();
 			}
 		}
 
@@ -798,14 +778,14 @@ public class MeshBuilder implements MeshPartBuilder {
 	@Override
 	@Deprecated
 	public void patch (VertexInfo corner00, VertexInfo corner10, VertexInfo corner11, VertexInfo corner01, int divisionsU,
-		int divisionsV) {
+                       int divisionsV) {
 		PatchShapeBuilder.build(this, corner00, corner10, corner11, corner01, divisionsU, divisionsV);
 	}
 
 	@Override
 	@Deprecated
 	public void patch (Vector3 corner00, Vector3 corner10, Vector3 corner11, Vector3 corner01, Vector3 normal, int divisionsU,
-		int divisionsV) {
+                       int divisionsV) {
 		PatchShapeBuilder.build(this, corner00, corner10, corner11, corner01, normal, divisionsU, divisionsV);
 	}
 
@@ -819,14 +799,14 @@ public class MeshBuilder implements MeshPartBuilder {
 	@Override
 	@Deprecated
 	public void box (VertexInfo corner000, VertexInfo corner010, VertexInfo corner100, VertexInfo corner110, VertexInfo corner001,
-		VertexInfo corner011, VertexInfo corner101, VertexInfo corner111) {
+                     VertexInfo corner011, VertexInfo corner101, VertexInfo corner111) {
 		BoxShapeBuilder.build(this, corner000, corner010, corner100, corner110, corner001, corner011, corner101, corner111);
 	}
 
 	@Override
 	@Deprecated
 	public void box (Vector3 corner000, Vector3 corner010, Vector3 corner100, Vector3 corner110, Vector3 corner001,
-		Vector3 corner011, Vector3 corner101, Vector3 corner111) {
+                     Vector3 corner011, Vector3 corner101, Vector3 corner111) {
 		BoxShapeBuilder.build(this, corner000, corner010, corner100, corner110, corner001, corner011, corner101, corner111);
 	}
 
@@ -864,7 +844,7 @@ public class MeshBuilder implements MeshPartBuilder {
 	@Override
 	@Deprecated
 	public void circle (float radius, int divisions, final Vector3 center, final Vector3 normal, final Vector3 tangent,
-		final Vector3 binormal) {
+                        final Vector3 binormal) {
 		EllipseShapeBuilder.build(this, radius, divisions, center, normal, tangent, binormal);
 	}
 
@@ -893,7 +873,7 @@ public class MeshBuilder implements MeshPartBuilder {
 	@Override
 	@Deprecated
 	public void circle (float radius, int divisions, final Vector3 center, final Vector3 normal, final Vector3 tangent,
-		final Vector3 binormal, float angleFrom, float angleTo) {
+                        final Vector3 binormal, float angleFrom, float angleTo) {
 		circle(radius, divisions, center.x, center.y, center.z, normal.x, normal.y, normal.z, tangent.x, tangent.y, tangent.z,
 			binormal.x, binormal.y, binormal.z, angleFrom, angleTo);
 	}
@@ -923,7 +903,7 @@ public class MeshBuilder implements MeshPartBuilder {
 	@Override
 	@Deprecated
 	public void ellipse (float width, float height, int divisions, final Vector3 center, final Vector3 normal,
-		final Vector3 tangent, final Vector3 binormal) {
+                         final Vector3 tangent, final Vector3 binormal) {
 		EllipseShapeBuilder.build(this, width, height, divisions, center, normal, tangent, binormal);
 	}
 
@@ -947,14 +927,14 @@ public class MeshBuilder implements MeshPartBuilder {
 	@Override
 	@Deprecated
 	public void ellipse (float width, float height, int divisions, final Vector3 center, final Vector3 normal, float angleFrom,
-		float angleTo) {
+                         float angleTo) {
 		EllipseShapeBuilder.build(this, width, height, divisions, center, normal, angleFrom, angleTo);
 	}
 
 	@Override
 	@Deprecated
 	public void ellipse (float width, float height, int divisions, final Vector3 center, final Vector3 normal,
-		final Vector3 tangent, final Vector3 binormal, float angleFrom, float angleTo) {
+                         final Vector3 tangent, final Vector3 binormal, float angleFrom, float angleTo) {
 		EllipseShapeBuilder.build(this, width, height, divisions, center, normal, tangent, binormal, angleFrom, angleTo);
 	}
 
@@ -1051,7 +1031,7 @@ public class MeshBuilder implements MeshPartBuilder {
 	@Override
 	@Deprecated
 	public void sphere (final Matrix4 transform, float width, float height, float depth, int divisionsU, int divisionsV,
-		float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
+                        float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
 		SphereShapeBuilder.build(this, transform, width, height, depth, divisionsU, divisionsV, angleUFrom, angleUTo, angleVFrom,
 			angleVTo);
 	}

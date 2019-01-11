@@ -16,24 +16,10 @@
 
 package com.badlogic.gdx.graphics;
 
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.glutils.IndexArray;
-import com.badlogic.gdx.graphics.glutils.IndexBufferObject;
-import com.badlogic.gdx.graphics.glutils.IndexBufferObjectSubData;
-import com.badlogic.gdx.graphics.glutils.IndexData;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.graphics.glutils.VertexArray;
-import com.badlogic.gdx.graphics.glutils.VertexBufferObject;
-import com.badlogic.gdx.graphics.glutils.VertexBufferObjectSubData;
-import com.badlogic.gdx.graphics.glutils.VertexBufferObjectWithVAO;
-import com.badlogic.gdx.graphics.glutils.VertexData;
+import com.badlogic.gdx.graphics.glutils.*;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
@@ -42,6 +28,11 @@ import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+
+import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 /** <p>
  * A Mesh holds vertices composed of attributes specified by a {@link VertexAttributes} instance. The vertices are held either in
@@ -927,7 +918,7 @@ public class Mesh implements Disposable {
 	 * @param start the vertex to start with
 	 * @param count the amount of vertices to transform */
 	public static void transform (final Matrix4 matrix, final float[] vertices, int vertexSize, int offset, int dimensions,
-		int start, int count) {
+                                  int start, int count) {
 		if (offset < 0 || dimensions < 1 || (offset + dimensions) > vertexSize) throw new IndexOutOfBoundsException();
 		if (start < 0 || count < 1 || ((start + count) * vertexSize) > vertices.length)
 			throw new IndexOutOfBoundsException("start = " + start + ", count = " + count + ", vertexSize = " + vertexSize

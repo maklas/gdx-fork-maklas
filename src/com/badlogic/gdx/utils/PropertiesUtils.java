@@ -17,17 +17,13 @@
 
 package com.badlogic.gdx.utils;
 
+import com.badlogic.gdx.utils.ObjectMap.Entry;
+
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.Date;
-
-import com.badlogic.gdx.utils.ObjectMap.Entry;
 
 /** {@code PropertiesUtils} is a helper class that allows you to load and store key/value pairs of an
  * {@code ObjectMap<String,String>} with the same line-oriented syntax supported by {@code java.util.Properties}. */
@@ -44,7 +40,7 @@ public final class PropertiesUtils {
 	 * compatible with <code>java.util.Properties</code>.
 	 * <p>
 	 * The input stream remains open after this method returns.
-	 * 
+	 *
 	 * @param properties the map to be filled.
 	 * @param reader the input character stream reader.
 	 * @throws IOException if an error occurred when reading from the input stream.
@@ -221,7 +217,7 @@ public final class PropertiesUtils {
 	 * <code>=</code>, and <code>:</code> are written with a preceding backslash to ensure that they are properly loaded.
 	 * <p>
 	 * After the entries have been written, the output stream is flushed. The output stream remains open after this method returns.
-	 * 
+	 *
 	 * @param properties the {@code ObjectMap}.
 	 * @param writer an output character stream writer.
 	 * @param comment an optional comment to be written, or null.
@@ -263,7 +259,11 @@ public final class PropertiesUtils {
 			}
 			switch (ch) {
 			case ' ':
-				if (i == 0 || escapeSpace) outBuffer.append("\\ ");
+				if (i == 0 || escapeSpace) {
+					outBuffer.append("\\ ");
+				} else {
+					outBuffer.append(ch);
+				}
 				break;
 			case '\n':
 				outBuffer.append("\\n");

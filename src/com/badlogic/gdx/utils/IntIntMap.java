@@ -16,10 +16,10 @@
 
 package com.badlogic.gdx.utils;
 
+import com.badlogic.gdx.math.MathUtils;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import com.badlogic.gdx.math.MathUtils;
 
 /** An unordered map where the keys and values are ints. This implementation is a cuckoo hash map using 3 hashes, random walking,
  * and a small stash for problematic keys. No allocation is done except when growing the table size. <br>
@@ -278,7 +278,7 @@ public class IntIntMap implements Iterable<IntIntMap.Entry> {
 		if (stashSize == stashCapacity) {
 			// Too many pushes occurred and the stash is full, increase the table size.
 			resize(capacity << 1);
-			put(key, value);
+			putResize(key, value);
 			return;
 		}
 		// Store key in the stash.
@@ -411,6 +411,11 @@ public class IntIntMap implements Iterable<IntIntMap.Entry> {
 		}
 	}
 
+	/** Returns true if the map is empty. */
+	public boolean isEmpty () {
+		return size == 0;
+	}
+
 	/** Reduces the size of the backing arrays to be the specified capacity or less. If the capacity is already less, nothing is
 	 * done. If the map contains more items than the specified capacity, the next highest power of two capacity is used instead. */
 	public void shrink (int maximumCapacity) {
@@ -485,6 +490,7 @@ public class IntIntMap implements Iterable<IntIntMap.Entry> {
 	/** Increases the size of the backing array to accommodate the specified number of additional items. Useful before adding many
 	 * items to avoid multiple backing array resizes. */
 	public void ensureCapacity (int additionalCapacity) {
+		if (additionalCapacity < 0) throw new IllegalArgumentException("additionalCapacity must be >= 0: " + additionalCapacity);
 		int sizeNeeded = size + additionalCapacity;
 		if (sizeNeeded >= threshold) resize(MathUtils.nextPowerOfTwo((int)Math.ceil(sizeNeeded / loadFactor)));
 	}

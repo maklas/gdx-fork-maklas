@@ -16,8 +16,6 @@
 
 package com.badlogic.gdx.graphics.g3d.decals;
 
-import java.util.Comparator;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
@@ -26,6 +24,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.Pool;
+
+import java.util.Comparator;
 
 /** <p>
  * Minimalistic grouping strategy that splits decals into opaque and transparent ones enabling and disabling blending as needed.
@@ -203,7 +203,7 @@ public class CameraGroupStrategy implements GroupStrategy, Disposable {
 			+ "}";
 
 		shader = new ShaderProgram(vertexShader, fragmentShader);
-		if (shader.isCompiled() == false) throw new IllegalArgumentException("couldn't compile shader: " + shader.getLog());
+		if (!shader.isCompiled()) throw new IllegalArgumentException("couldn't compile shader: " + shader.getLog());
 	}
 
 	@Override

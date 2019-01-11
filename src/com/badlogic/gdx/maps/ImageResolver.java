@@ -27,7 +27,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 public interface ImageResolver {
 	/** @param name
 	 * @return the Texture for the given image name or null. */
-	public TextureRegion getImage (String name);
+	public TextureRegion getImage(String name);
 
 	public static class DirectImageResolver implements ImageResolver {
 		private final ObjectMap<String, Texture> images;

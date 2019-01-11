@@ -16,15 +16,6 @@
 
 package com.badlogic.gdx.net;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Net.HttpMethods;
 import com.badlogic.gdx.Net.HttpRequest;
@@ -35,6 +26,15 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.StreamUtils;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.badlogic.gdx.utils.async.AsyncTask;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 /** Implements part of the {@link Net} API using {@link HttpURLConnection}, to be easily reused between the Android and Desktop
  * backends.
@@ -244,7 +244,7 @@ public class NetJavaImpl {
 	}
 
 	synchronized void putIntoConnectionsAndListeners (final HttpRequest httpRequest,
-		final HttpResponseListener httpResponseListener, final HttpURLConnection connection) {
+                                                      final HttpResponseListener httpResponseListener, final HttpURLConnection connection) {
 		connections.put(httpRequest, connection);
 		listeners.put(httpRequest, httpResponseListener);
 	}
