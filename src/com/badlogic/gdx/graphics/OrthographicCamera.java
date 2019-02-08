@@ -119,9 +119,4 @@ public class OrthographicCamera extends Camera {
 	public void translate (Vector2 vec) {
 		translate(vec.x, vec.y, 0);
 	}
-
-	public void setPosition(float x, float y){
-		this.position.x = x;
-		this.position.y = y;
-	}
 }

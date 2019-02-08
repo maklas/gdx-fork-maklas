@@ -267,4 +267,9 @@ public abstract class Camera {
 	public Ray getPickRay (float screenX, float screenY) {
 		return getPickRay(screenX, screenY, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	}
+
+	public void setPosition(float x, float y){
+		this.position.x = x;
+		this.position.y = y;
+	}
 }
