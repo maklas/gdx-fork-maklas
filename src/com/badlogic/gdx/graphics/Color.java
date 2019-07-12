@@ -148,6 +148,26 @@ public class Color {
 		return clamp();
 	}
 
+	public Color r(float r) {
+		this.r = r;
+		return this;
+	}
+
+	public Color g(float g) {
+		this.g = g;
+		return this;
+	}
+
+	public Color b(float b) {
+		this.b = b;
+		return this;
+	}
+
+	public Color a(float a) {
+		this.a = a;
+		return this;
+	}
+
 	/** Subtracts the given color from this color
 	 * 
 	 * @param color the color
