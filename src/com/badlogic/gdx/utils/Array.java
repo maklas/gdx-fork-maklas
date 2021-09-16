@@ -676,6 +676,31 @@ public class Array<T> implements Iterable<T> {
 	}
 
 	/**
+	 * Adds value to the array if it's not present
+	 * @param identity If true, == comparison will be used. If false, .equals() comparison will be used.
+	 * @return true if added
+	 */
+	public boolean addUnique(T value, boolean identity) {
+		T[] items = this.items;
+		if (identity || value == null) {
+			for (int i = 0; i < this.size; i++) {
+				if (value == items[i]) {
+					return false;
+				}
+			}
+		} else {
+			for (int i = 0; i < this.size; i++) {
+				if (value.equals(items[i])) {
+					return false;
+				}
+			}
+		}
+		if (size == items.length) items = resize(Math.max(8, (int)(size * 1.75f)));
+		items[size++] = value;
+		return true;
+	}
+
+	/**
 	 * Removes duplicated items from the array. Mutates it.
 	 * @param identity If true, == comparison will be used. If false, .equals() comparison will be used.
 	 * @return self
