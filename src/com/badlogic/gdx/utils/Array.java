@@ -242,6 +242,16 @@ public class Array<T> implements Iterable<T> {
 		return -1;
 	}
 
+	public int findIndex(MapFunction<T, Boolean> checkFunction) {
+		T[] items = this.items;
+		for (int i = 0; i < size; i++) {
+			if (checkFunction.map(items[i])) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
 
 	/**
 	 * Calls service.execute on each objects of this array. Returns immidiately
