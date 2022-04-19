@@ -117,6 +117,14 @@ public class Stage extends InputAdapter implements Disposable {
 		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 	}
 
+	/** Creates a stage with the specified batch. This can be used to avoid creating a new batch (which can be
+	 * somewhat slow) if multiple stages are used during an application's life time.
+	 * @param batch Will not be disposed if {@link #dispose()} is called, handle disposal yourself. */
+	public Stage (Batch batch) {
+		this(new ScalingViewport(Scaling.stretch, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new OrthographicCamera()), batch);
+		ownsBatch = false;
+	}
+
 	public void draw () {
 		Camera camera = viewport.getCamera();
 		camera.update();

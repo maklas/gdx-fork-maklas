@@ -75,6 +75,13 @@ public class OrthographicCamera extends Camera {
 
 	/** Sets this camera to an orthographic projection, centered at (viewportWidth/2, viewportHeight/2), with the y-axis pointing up
 	 * or down.
+	 */
+	public void setToOrtho (float viewportWidth, float viewportHeight) {
+		setToOrtho(false, viewportWidth, viewportHeight);
+	}
+
+	/** Sets this camera to an orthographic projection, centered at (viewportWidth/2, viewportHeight/2), with the y-axis pointing up
+	 * or down.
 	 * @param yDown whether y should be pointing down.
 	 * @param viewportWidth
 	 * @param viewportHeight */

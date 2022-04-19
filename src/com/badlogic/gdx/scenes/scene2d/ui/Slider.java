@@ -24,10 +24,13 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.Pools;
+
+import java.util.function.Consumer;
 
 /** A slider is a horizontal indicator that allows a user to set a value. The slider has a range (min, max) and a stepping between
  * each value the slider represents.
@@ -205,6 +208,15 @@ public class Slider extends ProgressBar {
 	/** Returns true if the slider is being dragged. */
 	public boolean isDragging () {
 		return draggingPointer != -1;
+	}
+
+	public void addChangeListener(final Consumer<Float> listener){
+		addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				listener.accept(getValue());
+			}
+		});
 	}
 
 	/** Sets the mouse button, which can trigger a change of the slider. Is -1, so every button, by default. */

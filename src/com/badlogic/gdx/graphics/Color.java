@@ -112,6 +112,26 @@ public class Color {
 		return this;
 	}
 
+	public Color r(float r) {
+		this.r = r;
+		return this;
+	}
+
+	public Color g(float g) {
+		this.g = g;
+		return this;
+	}
+
+	public Color b(float b) {
+		this.b = b;
+		return this;
+	}
+
+	public Color a(float a) {
+		this.a = a;
+		return this;
+	}
+
 	/** Multiplies the this color and the given color
 	 * 
 	 * @param color the color

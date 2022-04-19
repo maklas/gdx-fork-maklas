@@ -16,10 +16,10 @@
 
 package com.badlogic.gdx.utils;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.reflect.ArrayReflection;
@@ -77,6 +77,15 @@ public class Array<T> implements Iterable<T> {
 		this(array.ordered, array.size, array.items.getClass().getComponentType());
 		size = array.size;
 		System.arraycopy(array.items, 0, items, 0, size);
+	}
+
+	public Array (Collection<? extends T> collection) {
+		size = collection.size();
+		items = (T[]) new Object[size];
+		int index = 0;
+		for (T t : collection) {
+			items[index++] = t;
+		}
 	}
 
 	/** Creates a new ordered array containing the elements in the specified array. The new array will have the same type of
@@ -261,6 +270,79 @@ public class Array<T> implements Iterable<T> {
 		return -1;
 	}
 
+	public int findIndex(Function<T, Boolean> checkFunction) {
+		T[] items = this.items;
+		for (int i = 0; i < size; i++) {
+			if (checkFunction.apply(items[i])) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+
+	/**
+	 * Calls service.execute on each objects of this array. Returns immidiately
+	 */
+	public void parallelExecute(Executor service, Function<T, Runnable> consumer){
+		for (int i = 0; i < size; i++) {
+			service.execute(consumer.apply(items[i]));
+		}
+	}
+
+	/**
+	 * <li>Creates new Executor service at size of min(Array.size, maxThreads)</li>
+	 * <li>and submits all mapped Runnables to it. </li>
+	 * <li>Waits for min(end of all executions, specified amount of time)</li>
+	 * <li>Returns true if successfully executed on each of them by current Time</li>
+	 * <li>Calls shutdownNow if some tasks are still running after specified amount of time</li>
+	 */
+	public boolean parallelExecuteAndWait(int maxThreads, long waitMillis, Function<T, Runnable> consumer) throws InterruptedException {
+		ExecutorService service = Executors.newFixedThreadPool(Math.min(maxThreads, size));
+		parallelExecute(service, consumer);
+		service.shutdown();
+		boolean b = service.awaitTermination(waitMillis, TimeUnit.MILLISECONDS);
+		if (!b) service.shutdownNow();
+		return b;
+	}
+
+	/**
+	 * <li>Creates new Executor service at size of min(Array.size, maxThreads)</li>
+	 * <li>and submits all mapped callables to it. </li>
+	 * <li>Waits for min(end of all executions, specified amount of time)</li>
+	 * <li>Returns values which successfully mapped in parrarel</li>
+	 */
+	public <V> Array<V> parallelInvokeAndWait(int maxThreads, long waitMillis, Function<T, Callable<V>> mapFunc) throws InterruptedException {
+		ExecutorService service = Executors.newFixedThreadPool(Math.min(maxThreads, size));
+		Array<Future<V>> futures = parallelSubmit(service, mapFunc);
+		service.shutdown();
+		service.awaitTermination(waitMillis, TimeUnit.MILLISECONDS);
+		Array<V> returnArr = new Array<V>();
+		for (Future<V> future : futures) {
+			if (future.isDone() && !future.isCancelled()){
+				V value = null;
+				try {
+					value = future.get();
+				} catch (ExecutionException e) {}
+				if (value != null)
+					returnArr.add(value);
+			}
+		}
+
+		return returnArr;
+	}
+
+	/**
+	 * Submits mapped Callables for execution.
+	 */
+	public <V> Array<Future<V>> parallelSubmit(ExecutorService service, Function<T, Callable<V>> mapFunc) {
+		Array<Future<V>> futures = new Array<Future<V>>();
+		for (int i = 0; i < size; i++) {
+			futures.add(service.submit(mapFunc.apply(items[i])));
+		}
+		return futures;
+	}
+
 	/** Removes the first instance of the specified value in the array.
 	 * @param value May be null.
 	 * @param identity If true, == comparison will be used. If false, .equals() comparison will be used.
@@ -371,6 +453,12 @@ public class Array<T> implements Iterable<T> {
 		return items[0];
 	}
 
+	public T last(){
+		int size = this.size;
+		if (size == 0) throw new IllegalStateException("Array is empty.");
+		return items[size - 1];
+	}
+
 	/** Returns true if the array has one or more items. */
 	public boolean notEmpty () {
 		return size > 0;
@@ -433,6 +521,11 @@ public class Array<T> implements Iterable<T> {
 		Sort.instance().sort(items, comparator, 0, size);
 	}
 
+	public Array<T> sortAndRet(Comparator<? super T> comparator){
+		this.sort(comparator);
+		return this;
+	}
+
 	/** Selects the nth-lowest element from the Array according to Comparator ranking. This might partially sort the Array. The
 	 * array must have a size greater than 0, or a {@link com.badlogic.gdx.utils.GdxRuntimeException} will be thrown.
 	 * @see Select
@@ -489,6 +582,64 @@ public class Array<T> implements Iterable<T> {
 		return iterable.iterator();
 	}
 
+	/**
+	 * Calls the Consumer on every item in the array just before removing all items from it.
+	 */
+	public Array<T> callAndClear(Consumer<T> c) {
+		for (int i = 0; i < size; i++) {
+			c.accept(items[i]);
+		}
+		clear();
+		return this;
+	}
+
+	/**
+	 * Removes items if they don't satisfy Predicate. Doesn't create new Array.
+	 * If you need new array, use array.cpy().filter();
+	 */
+	public Array<T> filter(Predicate<T> p){
+		for (Iterator<T> i = iterator(); i.hasNext();) {
+			T next = i.next();
+			if (!p.evaluate(next)){
+				i.remove();
+			}
+		}
+		return this;
+	}
+
+	/**
+	 * Collects mapped values into new Array
+	 */
+	public <R> Array<R> map(Function<T, R> mapFunction) {
+		Array<R> array = new Array<R>();
+		for (int i = 0; i < size; i++) {
+			array.add(mapFunction.apply(items[i]));
+		}
+		return array;
+	}
+
+	/**
+	 * Collects mapped values into new Array.
+	 * If mapFunction returns <b>null</b>, it's not added in resulted array
+	 */
+	public <R> Array<R> mapReduce(Function<T, R> mapFunction) {
+		Array<R> array = new Array<R>();
+		T[] items = this.items;
+		for (int i = 0; i < size; i++) {
+			R mappedValue = mapFunction.apply(items[i]);
+			if (mappedValue != null)
+				array.add(mappedValue);
+		}
+		return array;
+	}
+
+
+	public Array<T> cpy() {
+		Array<T> ts = new Array<T>();
+		ts.addAll(items, 0, size);
+		return ts;
+	}
+
 	/** Returns an iterable for the selected items in the array. Remove is supported, but not between hasNext() and next().
 	 * <p>
 	 * If {@link Collections#allocateIterators} is false, the same iterable instance is returned each time this method is called.
@@ -512,10 +663,153 @@ public class Array<T> implements Iterable<T> {
 		size = newSize;
 	}
 
+	/**
+	 * Returns how many items fit the predcate in the array
+	 */
+	public int count(Predicate<T> p){
+		int counter = 0;
+		for (int i = 0; i < size; i++) {
+			if (p.evaluate(items[i])) counter++;
+		}
+
+		return counter;
+	}
+
+	/**
+	 * Summarizes arbitrary long value from items.
+	 */
+	public long summarize(LongMapFunction<T> m){
+		long sum = 0;
+		for (int i = 0; i < size; i++) {
+			sum += m.map(items[i]);
+		}
+		return sum;
+	}
+
+	/**
+	 * Summarizes arbitrary double value from items.
+	 */
+	public double summarize(DoubleMapFunction<T> m){
+		double sum = 0;
+		for (int i = 0; i < size; i++) {
+			sum += m.map(items[i]);
+		}
+		return sum;
+	}
+
+	/**
+	 * Checks items on predicate. Returns as soon as predicate returns true on any item
+	 */
+	public boolean atLeastOneFits(Predicate<T> p){
+		for (int i = 0; i < size; i++) {
+			if (p.evaluate(items[i])) return true;
+		}
+		return false;
+	}
+
+
 	/** Returns a random item from the array, or null if the array is empty. */
 	public @Null T random () {
 		if (size == 0) return null;
 		return items[MathUtils.random(0, size - 1)];
+	}
+	/**
+	 * Adds value to the array if it's not present
+	 * @param identity If true, == comparison will be used. If false, .equals() comparison will be used.
+	 * @return true if added
+	 */
+	public boolean addUnique(T value, boolean identity) {
+		T[] items = this.items;
+		if (identity || value == null) {
+			for (int i = 0; i < this.size; i++) {
+				if (value == items[i]) {
+					return false;
+				}
+			}
+		} else {
+			for (int i = 0; i < this.size; i++) {
+				if (value.equals(items[i])) {
+					return false;
+				}
+			}
+		}
+		if (size == items.length) items = resize(Math.max(8, (int)(size * 1.75f)));
+		items[size++] = value;
+		return true;
+	}
+
+	/**
+	 * Removes duplicated items from the array. Mutates it.
+	 * @param identity If true, == comparison will be used. If false, .equals() comparison will be used.
+	 * @return self
+	 */
+	public Array<T> removeDuplicates(boolean identity){
+		if (size == 0) return this;
+		T[] oldItems = items;
+		T[] newItems = items = (T[])ArrayReflection.newInstance(items.getClass().getComponentType(), size);
+		newItems[0] = oldItems[0];
+		int j = 1;
+		if (identity) {
+			for (int i = 1; i < size; i++) {
+				T current = oldItems[i];
+				boolean alreadyExists = false;
+				for (int k = 0; k < j; k++) {
+					if (current == newItems[k]) {
+						alreadyExists = true;
+						break;
+					}
+				}
+				if (!alreadyExists) {
+					newItems[j++] = current;
+				}
+			}
+		} else {
+			for (int i = 1; i < size; i++) {
+				T current = oldItems[i];
+				boolean alreadyExists = false;
+				for (int k = 0; k < j; k++) {
+					T iterItem = newItems[k];
+					if (current == null && iterItem == null || (current != null && current.equals(iterItem))) {
+						alreadyExists = true;
+						break;
+					}
+				}
+				if (!alreadyExists) {
+					newItems[j++] = current;
+				}
+			}
+		}
+		size = j;
+		return this;
+	}
+
+	/**
+	 * Removes duplicated items from the array. Mutates it.
+	 * @param comparator if comparing 2 objects returns 0 - means duplicate. One of them will be removed.
+	 * @return self
+	 */
+	public Array<T> removeDuplicates(Comparator<T> comparator){
+		if (size == 0) return this;
+		T[] oldItems = items;
+		T[] newItems = items = (T[])ArrayReflection.newInstance(items.getClass().getComponentType(), size);
+		newItems[0] = oldItems[0];
+		int j = 1;
+		for (int i = 1; i < size; i++) {
+			T current = oldItems[i];
+			boolean alreadyExists = false;
+			for (int k = 0; k < j; k++) {
+				T iterItem = newItems[k];
+				if (comparator.compare(current, iterItem) == 0) {
+					alreadyExists = true;
+					break;
+				}
+			}
+			if (!alreadyExists) {
+				newItems[j++] = current;
+			}
+		}
+		size = j;
+		return this;
 	}
 
 	/** Returns the items as an array. Note the array is typed, so the {@link #Array(Class)} constructor must have been used.
@@ -529,6 +823,23 @@ public class Array<T> implements Iterable<T> {
 		System.arraycopy(items, 0, result, 0, size);
 		return result;
 	}
+
+	public List<T> toList() {
+		ArrayList<T> list = new ArrayList<T>(size);
+		for (int i = 0; i < size; i++) {
+			list.add((T)items[i]);
+		}
+		return list;
+	}
+
+	public Set<T> toSet() {
+		Set<T> set = new HashSet<T>(size);
+		for (int i = 0; i < size; i++) {
+			set.add((T)items[i]);
+		}
+		return set;
+	}
+
 
 	public int hashCode () {
 		if (!ordered) return super.hashCode();

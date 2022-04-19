@@ -95,6 +95,11 @@ public abstract class Camera {
 		lookAt(target.x, target.y, target.z);
 	}
 
+	public void setPosition(float x, float y){
+		this.position.x = x;
+		this.position.y = y;
+	}
+
 	/** Normalizes the up vector by first calculating the right vector via a cross product between direction and up, and then
 	 * recalculating the up vector via a cross product between right and direction. */
 	public void normalizeUp () {
