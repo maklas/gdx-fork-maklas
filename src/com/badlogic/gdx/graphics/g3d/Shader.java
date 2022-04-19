@@ -38,9 +38,9 @@ import com.badlogic.gdx.utils.Disposable;
  * 
  * A specific Shader instance might be (and usually is) dedicated to a specific type of {@link Renderable}. For example it might
  * use a {@link ShaderProgram} that is compiled with uniforms (shader input) for specific {@link Attribute} types. Therefore the
- * {@link #canRender(Renderable)} method can be used to check if the Shader instance can be used for a specific {@link Renderable}
- * . Rendering a {@link Renderable} using a Shader for which {@link #canRender(Renderable)} returns false might result in
- * unpredicted behavior or crash the application.</p>
+ * {@link #canRender(Renderable)} method can be used to check if the Shader instance can be used for a specific
+ * {@link Renderable}. Rendering a {@link Renderable} using a Shader for which {@link #canRender(Renderable)} returns false might
+ * result in unpredicted behavior or crash the application.</p>
  * 
  * To manage multiple shaders and create a new shader when required, a {@link ShaderProvider} can be used. Therefore, in practice,
  * a specific Shader implementation is usually accompanied by a specific {@link ShaderProvider} implementation (usually extending
@@ -54,7 +54,7 @@ import com.badlogic.gdx.utils.Disposable;
 public interface Shader extends Disposable {
 	/** Initializes the Shader, must be called before the Shader can be used. This typically compiles a {@link ShaderProgram},
 	 * fetches uniform locations and performs other preparations for usage of the Shader. */
-	void init();
+	void init ();
 
 	/** Compare this shader against the other, used for sorting, light weight shaders are rendered first. */
 	int compareTo (Shader other); // TODO: probably better to add some weight value to sort on
@@ -84,5 +84,5 @@ public interface Shader extends Disposable {
 	/** Cleanup the context so other shaders can render. Must be called when done rendering using the {@link #render(Renderable)}
 	 * method, which must be preceded by a call to {@link #begin(Camera, RenderContext)}. After a call to this method an call to
 	 * the {@link #render(Renderable)} method will fail until the {@link #begin(Camera, RenderContext)} is called. */
-	void end();
+	void end ();
 }

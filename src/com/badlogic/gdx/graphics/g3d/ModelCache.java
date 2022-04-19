@@ -16,15 +16,19 @@
 
 package com.badlogic.gdx.graphics.g3d;
 
+import java.util.Comparator;
+
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.model.MeshPart;
 import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.RenderableSorter;
-import com.badlogic.gdx.utils.*;
-
-import java.util.Comparator;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.FlushablePool;
+import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.Pool;
 
 /** ModelCache tries to combine multiple render calls into a single render call by merging them where possible. Can be used for
  * multiple type of models (e.g. varying vertex attributes or materials), the ModelCache will combine where possible. Can be used
@@ -46,11 +50,11 @@ public class ModelCache implements Disposable, RenderableProvider {
 		Mesh obtain (VertexAttributes vertexAttributes, int vertexCount, int indexCount);
 
 		/** Releases all previously obtained {@link Mesh}es using the the {@link #obtain(VertexAttributes, int, int)} method. */
-		void flush();
+		void flush ();
 	}
 
 	/** A basic {@link MeshPool} implementation that avoids creating new meshes at the cost of memory usage. It does this by making
-	 * the mesh always the maximum (32k) size. Use this when for dynamic caching where you need to obtain meshes very frequently
+	 * the mesh always the maximum (64k) size. Use this when for dynamic caching where you need to obtain meshes very frequently
 	 * (typically every frame).
 	 * @author Xoppa */
 	public static class SimpleMeshPool implements MeshPool {
@@ -75,8 +79,8 @@ public class ModelCache implements Disposable, RenderableProvider {
 					return mesh;
 				}
 			}
-			vertexCount = 1 + (int)Short.MAX_VALUE;
-			indexCount = Math.max(1 + (int)Short.MAX_VALUE, 1 << (32 - Integer.numberOfLeadingZeros(indexCount - 1)));
+			vertexCount = MeshBuilder.MAX_VERTICES;
+			indexCount = Math.max(vertexCount, 1 << (32 - Integer.numberOfLeadingZeros(indexCount - 1)));
 			Mesh result = new Mesh(false, vertexCount, indexCount, vertexAttributes);
 			usedMeshes.add(result);
 			return result;
@@ -268,8 +272,11 @@ public class ModelCache implements Disposable, RenderableProvider {
 			final Material mat = renderable.material;
 			final int pt = renderable.meshPart.primitiveType;
 
-			final boolean sameMesh = va.equals(vertexAttributes)
-				&& renderable.meshPart.size + meshBuilder.getNumVertices() < Short.MAX_VALUE; // comparing indices and vertices...
+			final boolean sameAttributes = va.equals(vertexAttributes);
+			final boolean indexedMesh = renderable.meshPart.mesh.getNumIndices() > 0;
+			final int verticesToAdd = indexedMesh ? renderable.meshPart.mesh.getNumVertices() : renderable.meshPart.size;
+			final boolean canHoldVertices = meshBuilder.getNumVertices() + verticesToAdd <= MeshBuilder.MAX_VERTICES;
+			final boolean sameMesh = sameAttributes && canHoldVertices;
 			final boolean samePart = sameMesh && pt == primitiveType && mat.same(material, true);
 
 			if (!samePart) {

@@ -50,7 +50,7 @@ public class NinePatchDrawable extends BaseDrawable implements TransformDrawable
 	}
 
 	public void draw (Batch batch, float x, float y, float originX, float originY, float width, float height, float scaleX,
-                      float scaleY, float rotation) {
+		float scaleY, float rotation) {
 		patch.draw(batch, x, y, originX, originY, width, height, scaleX, scaleY, rotation);
 	}
 
@@ -58,12 +58,14 @@ public class NinePatchDrawable extends BaseDrawable implements TransformDrawable
 	 * the patch's padding. */
 	public void setPatch (NinePatch patch) {
 		this.patch = patch;
-		setMinWidth(patch.getTotalWidth());
-		setMinHeight(patch.getTotalHeight());
-		setTopHeight(patch.getPadTop());
-		setRightWidth(patch.getPadRight());
-		setBottomHeight(patch.getPadBottom());
-		setLeftWidth(patch.getPadLeft());
+		if (patch != null) {
+			setMinWidth(patch.getTotalWidth());
+			setMinHeight(patch.getTotalHeight());
+			setTopHeight(patch.getPadTop());
+			setRightWidth(patch.getPadRight());
+			setBottomHeight(patch.getPadBottom());
+			setLeftWidth(patch.getPadLeft());
+		}
 	}
 
 	public NinePatch getPatch () {

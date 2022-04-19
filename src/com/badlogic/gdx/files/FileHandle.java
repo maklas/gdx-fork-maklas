@@ -16,19 +16,35 @@
 
 package com.badlogic.gdx.files;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.RandomAccessFile;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileChannel.MapMode;
+
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.StreamUtils;
 
-import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileChannel.MapMode;
-
-/** Represents a file or directory on the filesystem, classpath, Android SD card, or Android assets directory. FileHandles are
+/** Represents a file or directory on the filesystem, classpath, Android app storage, or Android assets directory. FileHandles are
  * created via a {@link Files} instance.
  * 
  * Because some of the file types are backed by composite files and may be compressed (for example, if they are in an Android .apk
@@ -141,7 +157,7 @@ public class FileHandle {
 		return new BufferedInputStream(read(), bufferSize);
 	}
 
-	/** Returns a reader for reading this file as characters.
+	/** Returns a reader for reading this file as characters the platform's default charset.
 	 * @throws GdxRuntimeException if the file handle represents a directory, doesn't exist, or could not be read. */
 	public Reader reader () {
 		return new InputStreamReader(read());
@@ -159,7 +175,7 @@ public class FileHandle {
 		}
 	}
 
-	/** Returns a buffered reader for reading this file as characters.
+	/** Returns a buffered reader for reading this file as characters using the platform's default charset.
 	 * @throws GdxRuntimeException if the file handle represents a directory, doesn't exist, or could not be read. */
 	public BufferedReader reader (int bufferSize) {
 		return new BufferedReader(new InputStreamReader(read()), bufferSize);
@@ -254,7 +270,7 @@ public class FileHandle {
 
 	/** Attempts to memory map this file. Android files must not be compressed.
 	 * @throws GdxRuntimeException if this file handle represents a directory, doesn't exist, or could not be read, or memory mapping fails, or is a {@link FileType#Classpath} file. */
-	public ByteBuffer map (MapMode mode) {
+	public ByteBuffer map (FileChannel.MapMode mode) {
 		if (type == FileType.Classpath) throw new GdxRuntimeException("Cannot map a classpath file: " + this);
 		RandomAccessFile raf = null;
 		try {
@@ -638,14 +654,12 @@ public class FileHandle {
 		return file().lastModified();
 	}
 
-	@Override
 	public boolean equals (Object obj) {
 		if (!(obj instanceof FileHandle)) return false;
 		FileHandle other = (FileHandle)obj;
 		return type == other.type && path().equals(other.path());
 	}
 
-	@Override
 	public int hashCode () {
 		int hash = 1;
 		hash = hash * 37 + type.hashCode();

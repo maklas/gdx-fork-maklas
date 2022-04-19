@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,16 +16,26 @@
 
 package com.badlogic.gdx.graphics;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.util.zip.CRC32;
+import java.util.zip.CheckedOutputStream;
+import java.util.zip.Deflater;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
+
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.utils.ByteArray;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.StreamUtils;
-
-import java.io.*;
-import java.nio.ByteBuffer;
-import java.util.zip.*;
 
 /** Writes Pixmaps to various formats.
  * @author mzechner
@@ -46,13 +56,15 @@ public class PixmapIO {
 		return CIM.read(file);
 	}
 
-	/** Writes the pixmap as a PNG with compression. See {@link PNG} to configure the compression level, more efficiently flip the
-	 * pixmap vertically, and to write out multiple PNGs with minimal allocation. */
-	static public void writePNG (FileHandle file, Pixmap pixmap) {
+	/** Writes the pixmap as a PNG. See {@link PNG} to write out multiple PNGs with minimal allocation.
+	 * @param compression sets the deflate compression level. Default is {@link Deflater#DEFAULT_COMPRESSION}
+	 * @param flipY flips the Pixmap vertically if true */
+	static public void writePNG (FileHandle file, Pixmap pixmap, int compression, boolean flipY) {
 		try {
 			PNG writer = new PNG((int)(pixmap.getWidth() * pixmap.getHeight() * 1.5f)); // Guess at deflated size.
 			try {
-				writer.setFlipY(false);
+				writer.setFlipY(flipY);
+				writer.setCompression(compression);
 				writer.write(file, pixmap);
 			} finally {
 				writer.dispose();
@@ -60,6 +72,12 @@ public class PixmapIO {
 		} catch (IOException ex) {
 			throw new GdxRuntimeException("Error writing PNG: " + file, ex);
 		}
+	}
+
+	/** Writes the pixmap as a PNG with compression. See {@link PNG} to configure the compression level, more efficiently flip the
+	 * pixmap vertically, and to write out multiple PNGs with minimal allocation. */
+	static public void writePNG (FileHandle file, Pixmap pixmap) {
+		writePNG(file, pixmap, Deflater.DEFAULT_COMPRESSION, false);
 	}
 
 	/** @author mzechner */
@@ -72,7 +90,6 @@ public class PixmapIO {
 			DataOutputStream out = null;
 
 			try {
-				// long start = System.nanoTime();
 				DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(file.write(false));
 				out = new DataOutputStream(deflaterOutputStream);
 				out.writeInt(pixmap.getWidth());
@@ -80,8 +97,8 @@ public class PixmapIO {
 				out.writeInt(Format.toGdx2DPixmapFormat(pixmap.getFormat()));
 
 				ByteBuffer pixelBuf = pixmap.getPixels();
-				pixelBuf.position(0);
-				pixelBuf.limit(pixelBuf.capacity());
+				((Buffer) pixelBuf).position(0);
+				((Buffer) pixelBuf).limit(pixelBuf.capacity());
 
 				int remainingBytes = pixelBuf.capacity() % BUFFER_SIZE;
 				int iterations = pixelBuf.capacity() / BUFFER_SIZE;
@@ -96,10 +113,8 @@ public class PixmapIO {
 					out.write(writeBuffer, 0, remainingBytes);
 				}
 
-				pixelBuf.position(0);
-				pixelBuf.limit(pixelBuf.capacity());
-				// Gdx.app.log("PixmapIO", "write (" + file.name() + "):" + (System.nanoTime() - start) / 1000000000.0f + ", " +
-				// Thread.currentThread().getName());
+				((Buffer) pixelBuf).position(0);
+				((Buffer) pixelBuf).limit(pixelBuf.capacity());
 			} catch (Exception e) {
 				throw new GdxRuntimeException("Couldn't write Pixmap to file '" + file + "'", e);
 			} finally {
@@ -111,7 +126,6 @@ public class PixmapIO {
 			DataInputStream in = null;
 
 			try {
-				// long start = System.nanoTime();
 				in = new DataInputStream(new InflaterInputStream(new BufferedInputStream(file.read())));
 				int width = in.readInt();
 				int height = in.readInt();
@@ -119,8 +133,8 @@ public class PixmapIO {
 				Pixmap pixmap = new Pixmap(width, height, format);
 
 				ByteBuffer pixelBuf = pixmap.getPixels();
-				pixelBuf.position(0);
-				pixelBuf.limit(pixelBuf.capacity());
+				((Buffer) pixelBuf).position(0);
+				((Buffer) pixelBuf).limit(pixelBuf.capacity());
 
 				synchronized (readBuffer) {
 					int readBytes = 0;
@@ -129,9 +143,8 @@ public class PixmapIO {
 					}
 				}
 
-				pixelBuf.position(0);
-				pixelBuf.limit(pixelBuf.capacity());
-				// Gdx.app.log("PixmapIO", "read:" + (System.nanoTime() - start) / 1000000000.0f);
+				((Buffer) pixelBuf).position(0);
+				((Buffer) pixelBuf).limit(pixelBuf.capacity());
 				return pixmap;
 			} catch (Exception e) {
 				throw new GdxRuntimeException("Couldn't read Pixmap from file '" + file + "'", e);
@@ -142,21 +155,21 @@ public class PixmapIO {
 	}
 
 	/** PNG encoder with compression. An instance can be reused to encode multiple PNGs with minimal allocation.
-	 * 
+	 *
 	 * <pre>
 	 * Copyright (c) 2007 Matthias Mann - www.matthiasmann.de
 	 * Copyright (c) 2014 Nathan Sweet
-	 * 
+	 *
 	 * Permission is hereby granted, free of charge, to any person obtaining a copy
 	 * of this software and associated documentation files (the "Software"), to deal
 	 * in the Software without restriction, including without limitation the rights
 	 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 	 * copies of the Software, and to permit persons to whom the Software is
 	 * furnished to do so, subject to the following conditions:
-	 * 
+	 *
 	 * The above copyright notice and this permission notice shall be included in
 	 * all copies or substantial portions of the Software.
-	 * 
+	 *
 	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 	 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 	 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -250,7 +263,7 @@ public class PixmapIO {
 			for (int y = 0, h = pixmap.getHeight(); y < h; y++) {
 				int py = flipY ? (h - y - 1) : y;
 				if (rgba8888) {
-					pixels.position(py * lineLen);
+					((Buffer) pixels).position(py * lineLen);
 					pixels.get(curLine, 0, lineLen);
 				} else {
 					for (int px = 0, x = 0; px < pixmap.getWidth(); px++) {
@@ -292,7 +305,7 @@ public class PixmapIO {
 				curLine = prevLine;
 				prevLine = temp;
 			}
-			pixels.position(oldPosition);
+			((Buffer) pixels).position(oldPosition);
 			deflaterOutput.finish();
 			buffer.endChunk(dataOutput);
 

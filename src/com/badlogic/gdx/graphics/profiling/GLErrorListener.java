@@ -18,7 +18,6 @@ package com.badlogic.gdx.graphics.profiling;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-
 import static com.badlogic.gdx.graphics.profiling.GLInterceptor.resolveErrorNumber;
 
 /** Listener for GL errors detected by {@link GLProfiler}.
@@ -29,7 +28,7 @@ public interface GLErrorListener {
 
 	/** Put your error logging code here.
 	 * @see GLInterceptor#resolveErrorNumber(int) */
-	public void onError(int error);
+	public void onError (int error);
 
 	// Basic implementations
 

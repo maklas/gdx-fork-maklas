@@ -16,6 +16,11 @@
 
 package com.badlogic.gdx.graphics.g2d;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -30,9 +35,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.OrderedMap;
-
-import java.util.Arrays;
-import java.util.Comparator;
 
 /** Packs {@link Pixmap pixmaps} into one or more {@link Page pages} to generate an atlas of pixmap instances. Provides means to
  * directly convert the pixmap atlas to a {@link TextureAtlas}. The packer supports padding and border pixel duplication,
@@ -108,6 +110,8 @@ public class PixmapPacker implements Disposable {
 	final Array<Page> pages = new Array();
 	PackStrategy packStrategy;
 
+	static Pattern indexPattern = Pattern.compile("(.+)_(\\d+)$");
+
 	/** Uses {@link GuillotineStrategy}.
 	 * @see PixmapPacker#PixmapPacker(int, int, Format, int, boolean, boolean, boolean, PackStrategy) */
 	public PixmapPacker (int pageWidth, int pageHeight, Format pageFormat, int padding, boolean duplicateBorder) {
@@ -129,7 +133,7 @@ public class PixmapPacker implements Disposable {
 	 * @param stripWhitespaceY strip whitespace in y axis
 	 *           */
 	public PixmapPacker (int pageWidth, int pageHeight, Format pageFormat, int padding, boolean duplicateBorder, boolean stripWhitespaceX,
-                         boolean stripWhitespaceY, PackStrategy packStrategy) {
+		boolean stripWhitespaceY, PackStrategy packStrategy) {
 		this.pageWidth = pageWidth;
 		this.pageHeight = pageHeight;
 		this.pageFormat = pageFormat;
@@ -163,13 +167,12 @@ public class PixmapPacker implements Disposable {
 		if (name != null && getRect(name) != null)
 			throw new GdxRuntimeException("Pixmap has already been packed with name: " + name);
 
-		boolean isPatch = name != null && name.endsWith(".9");
-
 		PixmapPackerRectangle rect;
 		Pixmap pixmapToDispose = null;
-		if (isPatch) {
+		if (name != null && name.endsWith(".9")) {
 			rect = new PixmapPackerRectangle(0, 0, image.getWidth() - 2, image.getHeight() - 2);
 			pixmapToDispose = new Pixmap(image.getWidth() - 2, image.getHeight() - 2, image.getFormat());
+			pixmapToDispose.setBlending(Blending.None);
 			rect.splits = getSplits(image);
 			rect.pads = getPads(image, rect.splits);
 			pixmapToDispose.drawPixmap(image, 0, 0, 1, 1, image.getWidth() - 1, image.getHeight() - 1);
@@ -229,6 +232,7 @@ public class PixmapPacker implements Disposable {
 				int newHeight = bottom - top;
 
 				pixmapToDispose = new Pixmap(newWidth, newHeight, image.getFormat());
+				pixmapToDispose.setBlending(Blending.None);
 				pixmapToDispose.drawPixmap(image, 0, 0, left, top, newWidth, newHeight);
 				image = pixmapToDispose;
 
@@ -257,8 +261,6 @@ public class PixmapPacker implements Disposable {
 				image.getGLType(), image.getPixels());
 		} else
 			page.dirty = true;
-
-		page.image.setBlending(Blending.None);
 
 		page.image.drawPixmap(image, rectX, rectY);
 
@@ -342,9 +344,18 @@ public class PixmapPacker implements Disposable {
 	/** Updates the {@link TextureAtlas}, adding any new {@link Pixmap} instances packed since the last call to this method. This
 	 * can be used to insert Pixmap instances on a separate thread via {@link #pack(String, Pixmap)} and update the TextureAtlas on
 	 * the rendering thread. This method must be called on the rendering thread. After calling this method, disposing the packer
+	 * will no longer dispose the page pixmaps. Has useIndexes on by default so as to keep backwards compatibility*/
+	public synchronized void updateTextureAtlas (TextureAtlas atlas, TextureFilter minFilter, TextureFilter magFilter,
+		boolean useMipMaps) {
+		updateTextureAtlas(atlas, minFilter, magFilter, useMipMaps, true);
+	}
+
+	/** Updates the {@link TextureAtlas}, adding any new {@link Pixmap} instances packed since the last call to this method. This
+	 * can be used to insert Pixmap instances on a separate thread via {@link #pack(String, Pixmap)} and update the TextureAtlas on
+	 * the rendering thread. This method must be called on the rendering thread. After calling this method, disposing the packer
 	 * will no longer dispose the page pixmaps. */
 	public synchronized void updateTextureAtlas (TextureAtlas atlas, TextureFilter minFilter, TextureFilter magFilter,
-                                                 boolean useMipMaps) {
+		boolean useMipMaps, boolean useIndexes) {
 		updatePageTextures(minFilter, magFilter, useMipMaps);
 		for (Page page : pages) {
 			if (page.addedRects.size > 0) {
@@ -353,13 +364,23 @@ public class PixmapPacker implements Disposable {
 					TextureAtlas.AtlasRegion region = new TextureAtlas.AtlasRegion(page.texture, (int)rect.x, (int)rect.y, (int)rect.width, (int)rect.height);
 
 					if (rect.splits != null) {
-						region.splits = rect.splits;
-						region.pads = rect.pads;
-
+						region.names = new String[] {"split", "pad"};
+						region.values = new int[][] {rect.splits, rect.pads};
 					}
 
-					region.name = name;
-					region.index = -1;
+					int imageIndex = -1;
+					String imageName = name;
+
+					if(useIndexes) {
+						Matcher matcher = indexPattern.matcher(imageName);
+						if (matcher.matches()) {
+							imageName = matcher.group(1);
+							imageIndex = Integer.parseInt(matcher.group(2));
+						}
+					}
+
+					region.name = imageName;
+					region.index = imageIndex;
 					region.offsetX = rect.offsetX;
 					region.offsetY = (int)(rect.originalHeight - rect.height - rect.offsetY);
 					region.originalWidth = rect.originalWidth;
@@ -376,7 +397,7 @@ public class PixmapPacker implements Disposable {
 	/** Calls {@link Page#updateTexture(TextureFilter, TextureFilter, boolean) updateTexture} for each page and adds a region to
 	 * the specified array for each page texture. */
 	public synchronized void updateTextureRegions (Array<TextureRegion> regions, TextureFilter minFilter, TextureFilter magFilter,
-                                                   boolean useMipMaps) {
+		boolean useMipMaps) {
 		updatePageTextures(minFilter, magFilter, useMipMaps);
 		while (regions.size < pages.size)
 			regions.add(new TextureRegion(pages.get(regions.size).texture));
@@ -452,9 +473,9 @@ public class PixmapPacker implements Disposable {
 		/** Creates a new page filled with the color provided by the {@link PixmapPacker#getTransparentColor()} */
 		public Page (PixmapPacker packer) {
 			image = new Pixmap(packer.pageWidth, packer.pageHeight, packer.pageFormat);
-			final Color transparentColor = packer.getTransparentColor();
-			this.image.setColor(transparentColor);
-			this.image.fill();
+			image.setBlending(Blending.None);
+			image.setColor(packer.getTransparentColor());
+			image.fill();
 		}
 
 		public Pixmap getPixmap () {

@@ -16,11 +16,11 @@
 
 package com.badlogic.gdx.graphics.profiling;
 
-import com.badlogic.gdx.graphics.GL20;
-
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+
+import com.badlogic.gdx.graphics.GL20;
 
 /** @author Daniel Holderbaum
  * @author Jan Polák */
@@ -614,7 +614,7 @@ public class GL20Interceptor extends GLInterceptor implements GL20 {
 	}
 
 	@Override
-	public String glGetActiveAttrib (int program, int index, IntBuffer size, Buffer type) {
+	public String glGetActiveAttrib (int program, int index, IntBuffer size, IntBuffer type) {
 		calls++;
 		String result = gl20.glGetActiveAttrib(program, index, size, type);
 		check();
@@ -622,7 +622,7 @@ public class GL20Interceptor extends GLInterceptor implements GL20 {
 	}
 
 	@Override
-	public String glGetActiveUniform (int program, int index, IntBuffer size, Buffer type) {
+	public String glGetActiveUniform (int program, int index, IntBuffer size, IntBuffer type) {
 		calls++;
 		String result = gl20.glGetActiveUniform(program, index, size, type);
 		check();

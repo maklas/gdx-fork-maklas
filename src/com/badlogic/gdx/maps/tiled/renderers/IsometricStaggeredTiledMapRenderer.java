@@ -16,6 +16,8 @@
 
 package com.badlogic.gdx.maps.tiled.renderers;
 
+import static com.badlogic.gdx.graphics.g2d.SpriteBatch.*;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -23,8 +25,6 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-
-import static com.badlogic.gdx.graphics.g2d.Batch.*;
 
 public class IsometricStaggeredTiledMapRenderer extends BatchTiledMapRenderer {
 

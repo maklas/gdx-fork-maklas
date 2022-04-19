@@ -149,7 +149,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 
 	@Override
 	public void draw (Texture texture, float x, float y, float originX, float originY, float width, float height, float scaleX,
-                      float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX, boolean flipY) {
+		float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX, boolean flipY) {
 		if (!adjustNeeded) {
 			super.draw(texture, x, y, originX, originY, width, height, scaleX, scaleY, rotation, srcX, srcY, srcWidth, srcHeight,
 				flipX, flipY);
@@ -161,7 +161,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 
 	@Override
 	public void draw (Texture texture, float x, float y, float width, float height, int srcX, int srcY, int srcWidth,
-                      int srcHeight, boolean flipX, boolean flipY) {
+		int srcHeight, boolean flipX, boolean flipY) {
 		if (!adjustNeeded) {
 			super.draw(texture, x, y, width, height, srcX, srcY, srcWidth, srcHeight, flipX, flipY);
 		} else {
@@ -226,7 +226,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 
 	@Override
 	public void draw (TextureRegion region, float x, float y, float originX, float originY, float width, float height,
-                      float scaleX, float scaleY, float rotation) {
+		float scaleX, float scaleY, float rotation) {
 		if (!adjustNeeded) {
 			super.draw(region, x, y, originX, originY, width, height, scaleX, scaleY, rotation);
 		} else {
@@ -236,7 +236,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 
 	@Override
 	public void draw (TextureRegion region, float x, float y, float originX, float originY, float width, float height,
-                      float scaleX, float scaleY, float rotation, boolean clockwise) {
+		float scaleX, float scaleY, float rotation, boolean clockwise) {
 		if (!adjustNeeded) {
 			super.draw(region, x, y, originX, originY, width, height, scaleX, scaleY, rotation, clockwise);
 		} else {
@@ -265,14 +265,14 @@ public class CpuSpriteBatch extends SpriteBatch {
 	}
 
 	private void drawAdjusted (TextureRegion region, float x, float y, float originX, float originY, float width, float height,
-                               float scaleX, float scaleY, float rotation) {
+		float scaleX, float scaleY, float rotation) {
 		// v must be flipped
 		drawAdjustedUV(region.texture, x, y, originX, originY, width, height, scaleX, scaleY, rotation, region.u, region.v2,
 			region.u2, region.v, false, false);
 	}
 
 	private void drawAdjusted (Texture texture, float x, float y, float originX, float originY, float width, float height,
-                               float scaleX, float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX, boolean flipY) {
+		float scaleX, float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX, boolean flipY) {
 		float invTexWidth = 1.0f / texture.getWidth();
 		float invTexHeight = 1.0f / texture.getHeight();
 
@@ -285,7 +285,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 	}
 
 	private void drawAdjustedUV (Texture texture, float x, float y, float originX, float originY, float width, float height,
-                                 float scaleX, float scaleY, float rotation, float u, float v, float u2, float v2, boolean flipX, boolean flipY) {
+		float scaleX, float scaleY, float rotation, float u, float v, float u2, float v2, boolean flipX, boolean flipY) {
 		if (!drawing) throw new IllegalStateException("CpuSpriteBatch.begin must be called before draw.");
 
 		if (texture != lastTexture)
@@ -407,7 +407,7 @@ public class CpuSpriteBatch extends SpriteBatch {
 	}
 
 	private void drawAdjusted (TextureRegion region, float x, float y, float originX, float originY, float width, float height,
-                               float scaleX, float scaleY, float rotation, boolean clockwise) {
+		float scaleX, float scaleY, float rotation, boolean clockwise) {
 		if (!drawing) throw new IllegalStateException("CpuSpriteBatch.begin must be called before draw.");
 
 		if (region.texture != lastTexture)

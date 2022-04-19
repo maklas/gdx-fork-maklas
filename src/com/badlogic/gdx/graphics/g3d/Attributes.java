@@ -16,10 +16,10 @@
 
 package com.badlogic.gdx.graphics.g3d;
 
-import com.badlogic.gdx.utils.Array;
-
 import java.util.Comparator;
 import java.util.Iterator;
+
+import com.badlogic.gdx.utils.Array;
 
 public class Attributes implements Iterable<Attribute>, Comparator<Attribute>, Comparable<Attributes> {
 	protected long mask;
@@ -109,7 +109,7 @@ public class Attributes implements Iterable<Attribute>, Comparator<Attribute>, C
 
 	/** Add multiple attributes to this material. If the material already contains an attribute of the same type it is overwritten. */
 	public final void set (final Attribute attribute1, final Attribute attribute2, final Attribute attribute3,
-                           final Attribute attribute4) {
+		final Attribute attribute4) {
 		set(attribute1);
 		set(attribute2);
 		set(attribute3);

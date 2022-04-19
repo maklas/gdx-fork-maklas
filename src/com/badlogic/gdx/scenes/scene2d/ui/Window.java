@@ -22,10 +22,15 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Null;
 
 /** A table that can be dragged and act as a modal window. The top padding is used as the window's title height.
  * <p>
@@ -129,7 +134,7 @@ public class Window extends Table {
 				float minWidth = getMinWidth(), maxWidth = getMaxWidth();
 				float minHeight = getMinHeight(), maxHeight = getMaxHeight();
 				Stage stage = getStage();
-				boolean clampPosition = keepWithinStage && getParent() == stage.getRoot();
+				boolean clampPosition = keepWithinStage && stage != null && getParent() == stage.getRoot();
 
 				if ((edge & MOVE) != 0) {
 					float amountX = x - startX, amountY = y - startY;
@@ -192,6 +197,7 @@ public class Window extends Table {
 	public void setStyle (WindowStyle style) {
 		if (style == null) throw new IllegalArgumentException("style cannot be null.");
 		this.style = style;
+
 		setBackground(style.background);
 		titleLabel.setStyle(new LabelStyle(style.titleFont, style.titleFontColor));
 		invalidateHierarchy();
@@ -232,17 +238,18 @@ public class Window extends Table {
 
 	public void draw (Batch batch, float parentAlpha) {
 		Stage stage = getStage();
-		if (stage.getKeyboardFocus() == null) stage.setKeyboardFocus(this);
+		if (stage != null) {
+			if (stage.getKeyboardFocus() == null) stage.setKeyboardFocus(this);
 
-		keepWithinStage();
+			keepWithinStage();
 
-		if (style.stageBackground != null) {
-			stageToLocalCoordinates(tmpPosition.set(0, 0));
-			stageToLocalCoordinates(tmpSize.set(stage.getWidth(), stage.getHeight()));
-			drawStageBackground(batch, parentAlpha, getX() + tmpPosition.x, getY() + tmpPosition.y, getX() + tmpSize.x,
-				getY() + tmpSize.y);
+			if (style.stageBackground != null) {
+				stageToLocalCoordinates(tmpPosition.set(0, 0));
+				stageToLocalCoordinates(tmpSize.set(stage.getWidth(), stage.getHeight()));
+				drawStageBackground(batch, parentAlpha, getX() + tmpPosition.x, getY() + tmpPosition.y, getX() + tmpSize.x,
+					getY() + tmpSize.y);
+			}
 		}
-
 		super.draw(batch, parentAlpha);
 	}
 
@@ -265,7 +272,7 @@ public class Window extends Table {
 		drawTitleTable = false; // Avoid drawing the title table again in drawChildren.
 	}
 
-	public Actor hit (float x, float y, boolean touchable) {
+	public @Null Actor hit (float x, float y, boolean touchable) {
 		if (!isVisible()) return null;
 		Actor hit = super.hit(x, y, touchable);
 		if (hit == null && isModal && (!touchable || getTouchable() == Touchable.enabled)) return this;
@@ -332,27 +339,25 @@ public class Window extends Table {
 	/** The style for a window, see {@link Window}.
 	 * @author Nathan Sweet */
 	static public class WindowStyle {
-		/** Optional. */
-		public Drawable background;
+		public @Null Drawable background;
 		public BitmapFont titleFont;
-		/** Optional. */
-		public Color titleFontColor = new Color(1, 1, 1, 1);
-		/** Optional. */
-		public Drawable stageBackground;
+		public @Null Color titleFontColor = new Color(1, 1, 1, 1);
+		public @Null Drawable stageBackground;
 
 		public WindowStyle () {
 		}
 
-		public WindowStyle (BitmapFont titleFont, Color titleFontColor, Drawable background) {
-			this.background = background;
+		public WindowStyle (BitmapFont titleFont, Color titleFontColor, @Null Drawable background) {
 			this.titleFont = titleFont;
 			this.titleFontColor.set(titleFontColor);
+			this.background = background;
 		}
 
 		public WindowStyle (WindowStyle style) {
-			this.background = style.background;
-			this.titleFont = style.titleFont;
-			this.titleFontColor = new Color(style.titleFontColor);
+			background = style.background;
+			titleFont = style.titleFont;
+			if (style.titleFontColor != null) titleFontColor = new Color(style.titleFontColor);
+			background = style.background;
 		}
 	}
 }

@@ -16,14 +16,15 @@
 
 package com.badlogic.gdx.graphics.g3d.particles;
 
+import java.util.Arrays;
+
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.particles.ParallelArray.ChannelDescriptor;
 import com.badlogic.gdx.graphics.g3d.particles.ParallelArray.ChannelInitializer;
 import com.badlogic.gdx.graphics.g3d.particles.ParallelArray.FloatChannel;
 
-import java.util.Arrays;
-
 /** This contains all the definitions of particle related channels and channel initializers. It is also used by the
- * {@link com.badlogic.gdx.graphics.g3d.particles.ParticleController} to handle temporary channels allocated by influencers.
+ * {@link ParticleController} to handle temporary channels allocated by influencers.
  * @author inferno */
 public class ParticleChannels {
 	private static int currentGlobalId;
@@ -127,8 +128,8 @@ public class ParticleChannels {
 	public static final ChannelDescriptor Rotation2D = new ChannelDescriptor(newGlobalId(), float.class, 2);
 	public static final ChannelDescriptor Rotation3D = new ChannelDescriptor(newGlobalId(), float.class, 4);
 	public static final ChannelDescriptor Scale = new ChannelDescriptor(newGlobalId(), float.class, 1);
-	public static final ChannelDescriptor ModelInstance = new ChannelDescriptor(newGlobalId(), com.badlogic.gdx.graphics.g3d.ModelInstance.class, 1);
-	public static final ChannelDescriptor ParticleController = new ChannelDescriptor(newGlobalId(), com.badlogic.gdx.graphics.g3d.particles.ParticleController.class, 1);
+	public static final ChannelDescriptor ModelInstance = new ChannelDescriptor(newGlobalId(), ModelInstance.class, 1);
+	public static final ChannelDescriptor ParticleController = new ChannelDescriptor(newGlobalId(), ParticleController.class, 1);
 	public static final ChannelDescriptor Acceleration = new ChannelDescriptor(newGlobalId(), float.class, 3); // gl units/s2
 	public static final ChannelDescriptor AngularVelocity2D = new ChannelDescriptor(newGlobalId(), float.class, 1);
 	public static final ChannelDescriptor AngularVelocity3D = new ChannelDescriptor(newGlobalId(), float.class, 3);

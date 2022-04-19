@@ -22,12 +22,25 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttribute;
-import com.badlogic.gdx.graphics.g3d.model.data.*;
+import com.badlogic.gdx.graphics.g3d.model.data.ModelAnimation;
+import com.badlogic.gdx.graphics.g3d.model.data.ModelData;
+import com.badlogic.gdx.graphics.g3d.model.data.ModelMaterial;
+import com.badlogic.gdx.graphics.g3d.model.data.ModelMesh;
+import com.badlogic.gdx.graphics.g3d.model.data.ModelMeshPart;
+import com.badlogic.gdx.graphics.g3d.model.data.ModelNode;
+import com.badlogic.gdx.graphics.g3d.model.data.ModelNodeAnimation;
+import com.badlogic.gdx.graphics.g3d.model.data.ModelNodeKeyframe;
+import com.badlogic.gdx.graphics.g3d.model.data.ModelNodePart;
+import com.badlogic.gdx.graphics.g3d.model.data.ModelTexture;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.*;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ArrayMap;
+import com.badlogic.gdx.utils.BaseJsonReader;
+import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.JsonValue;
 
 public class G3dModelLoader extends ModelLoader<ModelLoader.ModelParameters> {
 	public static final short VERSION_HI = 0;
@@ -65,7 +78,7 @@ public class G3dModelLoader extends ModelLoader<ModelLoader.ModelParameters> {
 		return model;
 	}
 
-	private void parseMeshes (ModelData model, JsonValue json) {
+	protected void parseMeshes (ModelData model, JsonValue json) {
 		JsonValue meshes = json.get("meshes");
 		if (meshes != null) {
 
@@ -110,7 +123,7 @@ public class G3dModelLoader extends ModelLoader<ModelLoader.ModelParameters> {
 		}
 	}
 
-	private int parseType (String type) {
+	protected int parseType (String type) {
 		if (type.equals("TRIANGLES")) {
 			return GL20.GL_TRIANGLES;
 		} else if (type.equals("LINES")) {
@@ -127,7 +140,7 @@ public class G3dModelLoader extends ModelLoader<ModelLoader.ModelParameters> {
 		}
 	}
 
-	private VertexAttribute[] parseAttributes (JsonValue attributes) {
+	protected VertexAttribute[] parseAttributes (JsonValue attributes) {
 		Array<VertexAttribute> vertexAttributes = new Array<VertexAttribute>();
 		int unit = 0;
 		int blendWeightCount = 0;
@@ -158,7 +171,7 @@ public class G3dModelLoader extends ModelLoader<ModelLoader.ModelParameters> {
 		return vertexAttributes.toArray(VertexAttribute.class);
 	}
 
-	private void parseMaterials (ModelData model, JsonValue json, String materialDir) {
+	protected void parseMaterials (ModelData model, JsonValue json, String materialDir) {
 		JsonValue materials = json.get("materials");
 		if (materials == null) {
 			// we should probably create some default material in this case
@@ -221,7 +234,7 @@ public class G3dModelLoader extends ModelLoader<ModelLoader.ModelParameters> {
 		}
 	}
 
-	private int parseTextureUsage (final String value) {
+	protected int parseTextureUsage (final String value) {
 		if (value.equalsIgnoreCase("AMBIENT"))
 			return ModelTexture.USAGE_AMBIENT;
 		else if (value.equalsIgnoreCase("BUMP"))
@@ -244,14 +257,14 @@ public class G3dModelLoader extends ModelLoader<ModelLoader.ModelParameters> {
 		return ModelTexture.USAGE_UNKNOWN;
 	}
 
-	private Color parseColor (JsonValue colorArray) {
+	protected Color parseColor (JsonValue colorArray) {
 		if (colorArray.size >= 3)
 			return new Color(colorArray.getFloat(0), colorArray.getFloat(1), colorArray.getFloat(2), 1.0f);
 		else
 			throw new GdxRuntimeException("Expected Color values <> than three.");
 	}
 
-	private Vector2 readVector2 (JsonValue vectorArray, float x, float y) {
+	protected Vector2 readVector2 (JsonValue vectorArray, float x, float y) {
 		if (vectorArray == null)
 			return new Vector2(x, y);
 		else if (vectorArray.size == 2)
@@ -260,7 +273,7 @@ public class G3dModelLoader extends ModelLoader<ModelLoader.ModelParameters> {
 			throw new GdxRuntimeException("Expected Vector2 values <> than two.");
 	}
 
-	private Array<ModelNode> parseNodes (ModelData model, JsonValue json) {
+	protected Array<ModelNode> parseNodes (ModelData model, JsonValue json) {
 		JsonValue nodes = json.get("nodes");
 		if (nodes != null) {
 			model.nodes.ensureCapacity(nodes.size);
@@ -272,9 +285,9 @@ public class G3dModelLoader extends ModelLoader<ModelLoader.ModelParameters> {
 		return model.nodes;
 	}
 
-	private final Quaternion tempQ = new Quaternion();
+	protected final Quaternion tempQ = new Quaternion();
 
-	private ModelNode parseNodesRecursively (JsonValue json) {
+	protected ModelNode parseNodesRecursively (JsonValue json) {
 		ModelNode jsonNode = new ModelNode();
 
 		String id = json.getString("id", null);
@@ -354,7 +367,7 @@ public class G3dModelLoader extends ModelLoader<ModelLoader.ModelParameters> {
 		return jsonNode;
 	}
 
-	private void parseAnimations (ModelData model, JsonValue json) {
+	protected void parseAnimations (ModelData model, JsonValue json) {
 		JsonValue animations = json.get("animations");
 		if (animations == null) return;
 
@@ -377,7 +390,7 @@ public class G3dModelLoader extends ModelLoader<ModelLoader.ModelParameters> {
 				if (keyframes != null && keyframes.isArray()) {
 					for (JsonValue keyframe = keyframes.child; keyframe != null; keyframe = keyframe.next) {
 						final float keytime = keyframe.getFloat("keytime", 0f) / 1000.f;
-						JsonValue translation = keyframe.get("translation");
+						JsonValue translation = keyframe.get("translation"); 
 						if (translation != null && translation.size == 3) {
 							if (nodeAnim.translation == null)
 								nodeAnim.translation = new Array<ModelNodeKeyframe<Vector3>>();

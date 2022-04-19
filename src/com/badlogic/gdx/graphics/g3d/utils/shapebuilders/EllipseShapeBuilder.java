@@ -28,7 +28,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 public class EllipseShapeBuilder extends BaseShapeBuilder {
 	/** Build a circle */
 	public static void build (MeshPartBuilder builder, float radius, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY,
-                              float normalZ) {
+		float normalZ) {
 		build(builder, radius, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, 0f, 360f);
 	}
 
@@ -39,21 +39,21 @@ public class EllipseShapeBuilder extends BaseShapeBuilder {
 
 	/** Build a circle */
 	public static void build (MeshPartBuilder builder, float radius, int divisions, final Vector3 center, final Vector3 normal, final Vector3 tangent,
-                              final Vector3 binormal) {
+		final Vector3 binormal) {
 		build(builder, radius, divisions, center.x, center.y, center.z, normal.x, normal.y, normal.z, tangent.x, tangent.y, tangent.z,
 			binormal.x, binormal.y, binormal.z);
 	}
 
 	/** Build a circle */
 	public static void build (MeshPartBuilder builder, float radius, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY,
-                              float normalZ, float tangentX, float tangentY, float tangentZ, float binormalX, float binormalY, float binormalZ) {
+		float normalZ, float tangentX, float tangentY, float tangentZ, float binormalX, float binormalY, float binormalZ) {
 		build(builder, radius, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, tangentX, tangentY, tangentZ, binormalX,
 			binormalY, binormalZ, 0f, 360f);
 	}
 
 	/** Build a circle */
 	public static void build (MeshPartBuilder builder, float radius, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY,
-                              float normalZ, float angleFrom, float angleTo) {
+		float normalZ, float angleFrom, float angleTo) {
 		build(builder, radius * 2f, radius * 2f, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, angleFrom, angleTo);
 	}
 
@@ -64,77 +64,77 @@ public class EllipseShapeBuilder extends BaseShapeBuilder {
 
 	/** Build a circle */
 	public static void build (MeshPartBuilder builder, float radius, int divisions, final Vector3 center, final Vector3 normal, final Vector3 tangent,
-                              final Vector3 binormal, float angleFrom, float angleTo) {
+		final Vector3 binormal, float angleFrom, float angleTo) {
 		build(builder, radius, divisions, center.x, center.y, center.z, normal.x, normal.y, normal.z, tangent.x, tangent.y, tangent.z,
 			binormal.x, binormal.y, binormal.z, angleFrom, angleTo);
 	}
 
 	/** Build a circle */
 	public static void build (MeshPartBuilder builder, float radius, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY,
-                              float normalZ, float tangentX, float tangentY, float tangentZ, float binormalX, float binormalY, float binormalZ,
-                              float angleFrom, float angleTo) {
+		float normalZ, float tangentX, float tangentY, float tangentZ, float binormalX, float binormalY, float binormalZ,
+		float angleFrom, float angleTo) {
 		build(builder, radius * 2, radius * 2, 0, 0, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, tangentX, tangentY,
 			tangentZ, binormalX, binormalY, binormalZ, angleFrom, angleTo);
 	}
 
 	/** Build a ellipse */
 	public static void build (MeshPartBuilder builder, float width, float height, int divisions, float centerX, float centerY,
-                              float centerZ, float normalX, float normalY, float normalZ) {
+		float centerZ, float normalX, float normalY, float normalZ) {
 		build(builder, width, height, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, 0f, 360f);
 	}
 
 	/** Build a ellipse */
 	public static void build (MeshPartBuilder builder, float width, float height, int divisions, final Vector3 center,
-                              final Vector3 normal) {
+		final Vector3 normal) {
 		build(builder, width, height, divisions, center.x, center.y, center.z, normal.x, normal.y, normal.z);
 	}
 
 	/** Build a ellipse */
 	public static void build (MeshPartBuilder builder, float width, float height, int divisions, final Vector3 center,
-                              final Vector3 normal, final Vector3 tangent, final Vector3 binormal) {
+		final Vector3 normal, final Vector3 tangent, final Vector3 binormal) {
 		build(builder, width, height, divisions, center.x, center.y, center.z, normal.x, normal.y, normal.z, tangent.x, tangent.y,
 			tangent.z, binormal.x, binormal.y, binormal.z);
 	}
 
 	/** Build a ellipse */
 	public static void build (MeshPartBuilder builder, float width, float height, int divisions, float centerX, float centerY,
-                              float centerZ, float normalX, float normalY, float normalZ, float tangentX, float tangentY, float tangentZ,
-                              float binormalX, float binormalY, float binormalZ) {
+		float centerZ, float normalX, float normalY, float normalZ, float tangentX, float tangentY, float tangentZ,
+		float binormalX, float binormalY, float binormalZ) {
 		build(builder, width, height, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, tangentX, tangentY, tangentZ,
 			binormalX, binormalY, binormalZ, 0f, 360f);
 	}
 
 	/** Build a ellipse */
 	public static void build (MeshPartBuilder builder, float width, float height, int divisions, float centerX, float centerY,
-                              float centerZ, float normalX, float normalY, float normalZ, float angleFrom, float angleTo) {
+		float centerZ, float normalX, float normalY, float normalZ, float angleFrom, float angleTo) {
 		build(builder, width, height, 0f, 0f, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, angleFrom, angleTo);
 	}
 
 	/** Build a ellipse */
 	public static void build (MeshPartBuilder builder, float width, float height, int divisions, final Vector3 center,
-                              final Vector3 normal, float angleFrom, float angleTo) {
+		final Vector3 normal, float angleFrom, float angleTo) {
 		build(builder, width, height, 0f, 0f, divisions, center.x, center.y, center.z, normal.x, normal.y, normal.z, angleFrom, angleTo);
 	}
 
 	/** Build a ellipse */
 	public static void build (MeshPartBuilder builder, float width, float height, int divisions, final Vector3 center,
-                              final Vector3 normal, final Vector3 tangent, final Vector3 binormal, float angleFrom, float angleTo) {
+		final Vector3 normal, final Vector3 tangent, final Vector3 binormal, float angleFrom, float angleTo) {
 		build(builder, width, height, 0f, 0f, divisions, center.x, center.y, center.z, normal.x, normal.y, normal.z, tangent.x,
 			tangent.y, tangent.z, binormal.x, binormal.y, binormal.z, angleFrom, angleTo);
 	}
 
 	/** Build a ellipse */
 	public static void build (MeshPartBuilder builder, float width, float height, int divisions, float centerX, float centerY,
-                              float centerZ, float normalX, float normalY, float normalZ, float tangentX, float tangentY, float tangentZ,
-                              float binormalX, float binormalY, float binormalZ, float angleFrom, float angleTo) {
+		float centerZ, float normalX, float normalY, float normalZ, float tangentX, float tangentY, float tangentZ,
+		float binormalX, float binormalY, float binormalZ, float angleFrom, float angleTo) {
 		build(builder, width, height, 0f, 0f, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, tangentX, tangentY,
 			tangentZ, binormalX, binormalY, binormalZ, angleFrom, angleTo);
 	}
 
 	/** Build an ellipse */
 	public static void build (MeshPartBuilder builder, float width, float height, float innerWidth, float innerHeight,
-                              int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ, float angleFrom,
-                              float angleTo) {
+		int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ, float angleFrom,
+		float angleTo) {
 		tmpV1.set(normalX, normalY, normalZ).crs(0, 0, 1);
 		tmpV2.set(normalX, normalY, normalZ).crs(0, 1, 0);
 		if (tmpV2.len2() > tmpV1.len2()) tmpV1.set(tmpV2);
@@ -145,22 +145,22 @@ public class EllipseShapeBuilder extends BaseShapeBuilder {
 
 	/** Build an ellipse */
 	public static void build (MeshPartBuilder builder, float width, float height, float innerWidth, float innerHeight,
-                              int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ) {
+		int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ) {
 		build(builder, width, height, innerWidth, innerHeight, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, 0f,
 			360f);
 	}
 
 	/** Build an ellipse */
 	public static void build (MeshPartBuilder builder, float width, float height, float innerWidth, float innerHeight,
-                              int divisions, Vector3 center, Vector3 normal) {
+		int divisions, Vector3 center, Vector3 normal) {
 		build(builder, width, height, innerWidth, innerHeight, divisions, center.x, center.y, center.z, normal.x, normal.y,
 			normal.z, 0f, 360f);
 	}
 
 	/** Build an ellipse */
 	public static void build (MeshPartBuilder builder, float width, float height, float innerWidth, float innerHeight,
-                              int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ, float tangentX,
-                              float tangentY, float tangentZ, float binormalX, float binormalY, float binormalZ, float angleFrom, float angleTo) {
+		int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ, float tangentX,
+		float tangentY, float tangentZ, float binormalX, float binormalY, float binormalZ, float angleFrom, float angleTo) {
 		if (innerWidth <= 0 || innerHeight <= 0) {
 			builder.ensureVertices(divisions + 2);
 			builder.ensureTriangleIndices(divisions);

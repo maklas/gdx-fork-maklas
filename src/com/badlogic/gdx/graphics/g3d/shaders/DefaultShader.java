@@ -21,8 +21,21 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.g3d.*;
-import com.badlogic.gdx.graphics.g3d.attributes.*;
+import com.badlogic.gdx.graphics.g3d.Attribute;
+import com.badlogic.gdx.graphics.g3d.Attributes;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Renderable;
+import com.badlogic.gdx.graphics.g3d.Shader;
+import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.CubemapAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.DepthTestAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.DirectionalLightsAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.PointLightsAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.SpotLightsAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.AmbientCubemap;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.environment.PointLight;
@@ -192,10 +205,12 @@ public class DefaultShader extends BaseShader {
 
 			@Override
 			public void set (BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-				for (int i = 0; i < bones.length; i++) {
+				for (int i = 0; i < bones.length; i += 16) {
 					final int idx = i / 16;
-					bones[i] = (renderable.bones == null || idx >= renderable.bones.length || renderable.bones[idx] == null) ? idtMatrix.val[i % 16]
-						: renderable.bones[idx].val[i % 16];
+					if (renderable.bones == null || idx >= renderable.bones.length || renderable.bones[idx] == null)
+						System.arraycopy(idtMatrix.val, 0, bones, i, 16);
+					else
+						System.arraycopy(renderable.bones[idx].val, 0, bones, i, 16);
 				}
 				shader.program.setUniformMatrix4fv(shader.loc(inputID), bones, 0, bones.length);
 			}
@@ -504,7 +519,7 @@ public class DefaultShader extends BaseShader {
 	}
 
 	public DefaultShader (final Renderable renderable, final Config config, final String prefix, final String vertexShader,
-                          final String fragmentShader) {
+		final String fragmentShader) {
 		this(renderable, config, new ShaderProgram(prefix + vertexShader, prefix + fragmentShader));
 	}
 
@@ -532,6 +547,10 @@ public class DefaultShader extends BaseShader {
 
 		if (!config.ignoreUnimplemented && (implementedFlags & attributesMask) != attributesMask)
 			throw new GdxRuntimeException("Some attributes not implemented yet (" + attributesMask + ")");
+
+		if (renderable.bones != null && renderable.bones.length > config.numBones) {
+			throw new GdxRuntimeException("too many bones: " + renderable.bones.length + ", max configured: " + config.numBones);
+		}
 
 		// Global uniforms
 		u_projTrans = register(Inputs.projTrans, Setters.projTrans);
@@ -706,6 +725,7 @@ public class DefaultShader extends BaseShader {
 
 	@Override
 	public boolean canRender (final Renderable renderable) {
+		if (renderable.bones != null && renderable.bones.length > config.numBones) return false;
 		final long renderableMask = combineAttributeMasks(renderable);
 		return (attributesMask == (renderableMask | optionalAttributes))
 			&& (vertexMask == renderable.meshPart.mesh.getVertexAttributes().getMaskWithSizePacked()) && (renderable.environment != null) == lighting;

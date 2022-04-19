@@ -13,11 +13,11 @@
 
 package com.badlogic.gdx.math;
 
+import java.io.Serializable;
+
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.NumberUtils;
 import com.badlogic.gdx.utils.Scaling;
-
-import java.io.Serializable;
 
 /** Encapsulates a 2D rectangle defined by its corner point in the bottom left and its extents in x (width) and y (height).
  * @author badlogicgames@gmail.com */
@@ -375,8 +375,8 @@ public class Rectangle implements Serializable, Shape2D {
 		return "[" + x + "," + y + "," + width + "," + height + "]";
 	}
 
-	/** Sets this {@code Rectangle} to the value represented by the specified string according to the format of {@link #toString()}
-	 * .
+	/** Sets this {@code Rectangle} to the value represented by the specified string according to the format of
+	 * {@link #toString()}.
 	 * @param v the string.
 	 * @return this rectangle for chaining */
 	public Rectangle fromString (String v) {

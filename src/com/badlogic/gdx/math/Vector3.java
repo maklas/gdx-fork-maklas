@@ -16,10 +16,10 @@
 
 package com.badlogic.gdx.math;
 
+import java.io.Serializable;
+
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.NumberUtils;
-
-import java.io.Serializable;
 
 /** Encapsulates a 3D vector. Allows chaining operations by returning a reference to itself in all modification methods.
  * @author badlogicgames@gmail.com */

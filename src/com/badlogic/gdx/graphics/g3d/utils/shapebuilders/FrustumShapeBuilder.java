@@ -44,7 +44,7 @@ public class FrustumShapeBuilder extends BaseShapeBuilder {
 	 * @param targetColor
 	 * @param crossColor */
 	public static void build (MeshPartBuilder builder, Camera camera, Color frustumColor, Color coneColor, Color upColor,
-                              Color targetColor, Color crossColor) {
+		Color targetColor, Color crossColor) {
 		Vector3[] planePoints = camera.frustum.planePoints;
 
 		// Frustum

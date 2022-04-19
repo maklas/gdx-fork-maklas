@@ -16,11 +16,10 @@
 
 package com.badlogic.gdx.utils;
 
-import com.badlogic.gdx.files.FileHandle;
-
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import com.badlogic.gdx.files.FileHandle;
 
 /** Lightweight UBJSON parser.<br>
  * <br>

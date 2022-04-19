@@ -253,6 +253,7 @@ public class VerticalGroup extends WidgetGroup {
 			}
 
 			if (y - height - space < padBottom || r == 0) {
+				r = Math.min(r, columnSizes.size - 2); // In case an actor changed size without invalidating this layout.
 				y = yStart;
 				if ((align & Align.bottom) != 0)
 					y -= maxHeight - columnSizes.get(r);
@@ -549,7 +550,7 @@ public class VerticalGroup extends WidgetGroup {
 		super.drawDebugBounds(shapes);
 		if (!getDebug()) return;
 		shapes.set(ShapeType.Line);
-		shapes.setColor(getStage().getDebugColor());
+		if (getStage() != null) shapes.setColor(getStage().getDebugColor());
 		shapes.rect(getX() + padLeft, getY() + padBottom, getOriginX(), getOriginY(), getWidth() - padLeft - padRight,
 			getHeight() - padBottom - padTop, getScaleX(), getScaleY(), getRotation());
 	}

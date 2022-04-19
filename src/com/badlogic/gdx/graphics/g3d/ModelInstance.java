@@ -16,7 +16,11 @@
 
 package com.badlogic.gdx.graphics.g3d;
 
-import com.badlogic.gdx.graphics.g3d.model.*;
+import com.badlogic.gdx.graphics.g3d.model.Animation;
+import com.badlogic.gdx.graphics.g3d.model.Node;
+import com.badlogic.gdx.graphics.g3d.model.NodeAnimation;
+import com.badlogic.gdx.graphics.g3d.model.NodeKeyframe;
+import com.badlogic.gdx.graphics.g3d.model.NodePart;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
@@ -88,7 +92,7 @@ public class ModelInstance implements RenderableProvider {
 	 * @param parentTransform True to apply the parent's node transform to the instance (only applicable if recursive is true).
 	 * @param mergeTransform True to apply the source node transform to the instance transform, resetting the node transform. */
 	public ModelInstance (final Model model, final Matrix4 transform, final String nodeId, boolean parentTransform,
-                          boolean mergeTransform) {
+		boolean mergeTransform) {
 		this(model, transform, nodeId, true, parentTransform, mergeTransform);
 	}
 
@@ -98,7 +102,7 @@ public class ModelInstance implements RenderableProvider {
 	 * @param parentTransform True to apply the parent's node transform to the instance (only applicable if recursive is true).
 	 * @param mergeTransform True to apply the source node transform to the instance transform, resetting the node transform. */
 	public ModelInstance (final Model model, final String nodeId, boolean recursive, boolean parentTransform,
-                          boolean mergeTransform) {
+		boolean mergeTransform) {
 		this(model, null, nodeId, recursive, parentTransform, mergeTransform);
 	}
 
@@ -109,7 +113,7 @@ public class ModelInstance implements RenderableProvider {
 	 * @param parentTransform True to apply the parent's node transform to the instance (only applicable if recursive is true).
 	 * @param mergeTransform True to apply the source node transform to the instance transform, resetting the node transform. */
 	public ModelInstance (final Model model, final Matrix4 transform, final String nodeId, boolean recursive,
-                          boolean parentTransform, boolean mergeTransform) {
+		boolean parentTransform, boolean mergeTransform) {
 		this(model, transform, nodeId, recursive, parentTransform, mergeTransform, defaultShareKeyframes);
 	}
 
@@ -120,7 +124,7 @@ public class ModelInstance implements RenderableProvider {
 	 * @param parentTransform True to apply the parent's node transform to the instance (only applicable if recursive is true).
 	 * @param mergeTransform True to apply the source node transform to the instance transform, resetting the node transform. */
 	public ModelInstance (final Model model, final Matrix4 transform, final String nodeId, boolean recursive,
-                          boolean parentTransform, boolean mergeTransform, boolean shareKeyframes) {
+		boolean parentTransform, boolean mergeTransform, boolean shareKeyframes) {
 		this.model = model;
 		this.transform = transform == null ? new Matrix4() : transform;
 		Node copy, node = model.getNode(nodeId, recursive);
@@ -279,42 +283,66 @@ public class ModelInstance implements RenderableProvider {
 		}
 	}
 
-	private void copyAnimations (final Iterable<Animation> source, boolean shareKeyframes) {
+	/** Copy source animations to this ModelInstance
+	 * @param source Iterable collection of source animations {@link Animation}*/
+	public void copyAnimations (final Iterable<Animation> source) {
 		for (final Animation anim : source) {
-			Animation animation = new Animation();
-			animation.id = anim.id;
-			animation.duration = anim.duration;
-			for (final NodeAnimation nanim : anim.nodeAnimations) {
-				final Node node = getNode(nanim.node.id);
-				if (node == null) continue;
-				NodeAnimation nodeAnim = new NodeAnimation();
-				nodeAnim.node = node;
-				if (shareKeyframes) {
-					nodeAnim.translation = nanim.translation;
-					nodeAnim.rotation = nanim.rotation;
-					nodeAnim.scaling = nanim.scaling;
-				} else {
-					if (nanim.translation != null) {
-						nodeAnim.translation = new Array<NodeKeyframe<Vector3>>();
-						for (final NodeKeyframe<Vector3> kf : nanim.translation)
-							nodeAnim.translation.add(new NodeKeyframe<Vector3>(kf.keytime, kf.value));
-					}
-					if (nanim.rotation != null) {
-						nodeAnim.rotation = new Array<NodeKeyframe<Quaternion>>();
-						for (final NodeKeyframe<Quaternion> kf : nanim.rotation)
-							nodeAnim.rotation.add(new NodeKeyframe<Quaternion>(kf.keytime, kf.value));
-					}
-					if (nanim.scaling != null) {
-						nodeAnim.scaling = new Array<NodeKeyframe<Vector3>>();
-						for (final NodeKeyframe<Vector3> kf : nanim.scaling)
-							nodeAnim.scaling.add(new NodeKeyframe<Vector3>(kf.keytime, kf.value));
-					}
-				}
-				if (nodeAnim.translation != null || nodeAnim.rotation != null || nodeAnim.scaling != null)
-					animation.nodeAnimations.add(nodeAnim);
-			}
-			if (animation.nodeAnimations.size > 0) animations.add(animation);
+			copyAnimation(anim, defaultShareKeyframes);
 		}
+	}
+
+	/** Copy source animations to this ModelInstance
+	 * @param source Iterable collection of source animations {@link Animation}
+	 * @param shareKeyframes Shallow copy of {@link NodeKeyframe}'s if it's true, otherwise make a deep copy.*/
+	public void copyAnimations (final Iterable<Animation> source, boolean shareKeyframes) {
+		for (final Animation anim : source) {
+			copyAnimation(anim, shareKeyframes);
+		}
+	}
+
+	/** Copy the source animation to this ModelInstance
+	 * @param sourceAnim The source animation {@link Animation}*/
+	public void copyAnimation(Animation sourceAnim){
+		copyAnimation(sourceAnim, defaultShareKeyframes);
+	}
+
+	/** Copy the source animation to this ModelInstance
+	 * @param sourceAnim The source animation {@link Animation}
+	 * @param shareKeyframes Shallow copy of {@link NodeKeyframe}'s if it's true, otherwise make a deep copy.*/
+	public void copyAnimation(Animation sourceAnim, boolean shareKeyframes){
+		Animation animation = new Animation();
+		animation.id = sourceAnim.id;
+		animation.duration = sourceAnim.duration;
+		for (final NodeAnimation nanim : sourceAnim.nodeAnimations) {
+			final Node node = getNode(nanim.node.id);
+			if (node == null) continue;
+			NodeAnimation nodeAnim = new NodeAnimation();
+			nodeAnim.node = node;
+			if (shareKeyframes) {
+				nodeAnim.translation = nanim.translation;
+				nodeAnim.rotation = nanim.rotation;
+				nodeAnim.scaling = nanim.scaling;
+			} else {
+				if (nanim.translation != null) {
+					nodeAnim.translation = new Array<NodeKeyframe<Vector3>>();
+					for (final NodeKeyframe<Vector3> kf : nanim.translation)
+						nodeAnim.translation.add(new NodeKeyframe<Vector3>(kf.keytime, kf.value));
+				}
+				if (nanim.rotation != null) {
+					nodeAnim.rotation = new Array<NodeKeyframe<Quaternion>>();
+					for (final NodeKeyframe<Quaternion> kf : nanim.rotation)
+						nodeAnim.rotation.add(new NodeKeyframe<Quaternion>(kf.keytime, kf.value));
+				}
+				if (nanim.scaling != null) {
+					nodeAnim.scaling = new Array<NodeKeyframe<Vector3>>();
+					for (final NodeKeyframe<Vector3> kf : nanim.scaling)
+						nodeAnim.scaling.add(new NodeKeyframe<Vector3>(kf.keytime, kf.value));
+				}
+			}
+			if (nodeAnim.translation != null || nodeAnim.rotation != null || nodeAnim.scaling != null)
+				animation.nodeAnimations.add(nodeAnim);
+		}
+		if (animation.nodeAnimations.size > 0) animations.add(animation);
 	}
 
 	/** Traverses the Node hierarchy and collects {@link Renderable} instances for every node with a graphical representation.

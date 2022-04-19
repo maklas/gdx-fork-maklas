@@ -24,10 +24,10 @@ import com.badlogic.gdx.graphics.Texture;
  * @author badlogic, Xoppa */
 public interface TextureBinder {
 	/** Prepares the binder for operation, must be matched with a call to {@link #end()}. */
-	public void begin();
+	public void begin ();
 
 	/** Disables all used texture units and unbinds textures. Resets the counts. */
-	public void end();
+	public void end ();
 
 	/** Binds the texture to an available unit and applies the filters in the descriptor.
 	 * @param textureDescriptor the {@link TextureDescriptor}
@@ -40,11 +40,11 @@ public interface TextureBinder {
 	public int bind (GLTexture texture);
 
 	/** @return the number of binds actually executed since the last call to {@link #resetCounts()} */
-	public int getBindCount();
+	public int getBindCount ();
 
 	/** @return the number of binds that could be avoided by reuse */
-	public int getReuseCount();
+	public int getReuseCount ();
 
 	/** Resets the bind/reuse counts */
-	public void resetCounts();
+	public void resetCounts ();
 }

@@ -17,7 +17,11 @@
 package com.badlogic.gdx.graphics.g3d.particles.batches;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.VertexAttribute;
+import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Renderable;
@@ -129,7 +133,7 @@ public class BillboardParticleBatch extends BufferedParticleBatch<BillboardContr
 	 * @param blendingAttribute Blending attribute used by the batch
 	 * @param depthTestAttribute DepthTest attribute used by the batch */
 	public BillboardParticleBatch (AlignMode mode, boolean useGPU, int capacity, BlendingAttribute blendingAttribute,
-                                   DepthTestAttribute depthTestAttribute) {
+		DepthTestAttribute depthTestAttribute) {
 		super(BillboardControllerRenderData.class);
 		renderables = new Array<Renderable>();
 		renderablePool = new RenderablePool();
@@ -283,6 +287,10 @@ public class BillboardParticleBatch extends BufferedParticleBatch<BillboardContr
 
 	public Texture getTexture () {
 		return texture;
+	}
+
+	public BlendingAttribute getBlendingAttribute () {
+		return blendingAttribute;
 	}
 
 	@Override

@@ -27,20 +27,20 @@ public interface TiledMapTile {
 		NONE, ALPHA
 	}
 
-	public int getId();
+	public int getId ();
 
-	public void setId(int id);
+	public void setId (int id);
 
 	/** @return the {@link BlendMode} to use for rendering the tile */
-	public BlendMode getBlendMode();
+	public BlendMode getBlendMode ();
 
 	/** Sets the {@link BlendMode} to use for rendering the tile
-	 *
+	 * 
 	 * @param blendMode the blend mode to use for rendering the tile */
-	public void setBlendMode(BlendMode blendMode);
+	public void setBlendMode (BlendMode blendMode);
 
 	/** @return texture region used to render the tile */
-	public TextureRegion getTextureRegion();
+	public TextureRegion getTextureRegion ();
 
 	/** Sets the texture region used to render the tile */
 	public void setTextureRegion(TextureRegion textureRegion);
@@ -58,7 +58,7 @@ public interface TiledMapTile {
 	public void setOffsetY(float offsetY);
 
 	/** @return tile's properties set */
-	public MapProperties getProperties();
+	public MapProperties getProperties ();
 
 	/** @return collection of objects contained in the tile */
 	public MapObjects getObjects();

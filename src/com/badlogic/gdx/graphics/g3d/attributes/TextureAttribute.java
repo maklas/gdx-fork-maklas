@@ -124,7 +124,7 @@ public class TextureAttribute extends Attribute {
 	}
 
 	public <T extends Texture> TextureAttribute (final long type, final TextureDescriptor<T> textureDescription, float offsetU,
-                                                 float offsetV, float scaleU, float scaleV, int uvIndex) {
+		float offsetV, float scaleU, float scaleV, int uvIndex) {
 		this(type, textureDescription);
 		this.offsetU = offsetU;
 		this.offsetV = offsetV;
@@ -134,7 +134,7 @@ public class TextureAttribute extends Attribute {
 	}
 
 	public <T extends Texture> TextureAttribute (final long type, final TextureDescriptor<T> textureDescription, float offsetU,
-                                                 float offsetV, float scaleU, float scaleV) {
+		float offsetV, float scaleU, float scaleV) {
 		this(type, textureDescription, offsetU, offsetV, scaleU, scaleV, 0);
 	}
 

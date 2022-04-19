@@ -38,7 +38,7 @@ public class BoxShapeBuilder extends BaseShapeBuilder {
 
 	/** Add a box. Requires GL_POINTS, GL_LINES or GL_TRIANGLES primitive type. */
 	public static void build (MeshPartBuilder builder, VertexInfo corner000, VertexInfo corner010, VertexInfo corner100,
-                              VertexInfo corner110, VertexInfo corner001, VertexInfo corner011, VertexInfo corner101, VertexInfo corner111) {
+		VertexInfo corner110, VertexInfo corner001, VertexInfo corner011, VertexInfo corner101, VertexInfo corner111) {
 		builder.ensureVertices(8);
 		final short i000 = builder.vertex(corner000);
 		final short i100 = builder.vertex(corner100);
@@ -72,7 +72,7 @@ public class BoxShapeBuilder extends BaseShapeBuilder {
 
 	/** Add a box. Requires GL_POINTS, GL_LINES or GL_TRIANGLES primitive type. */
 	public static void build (MeshPartBuilder builder, Vector3 corner000, Vector3 corner010, Vector3 corner100, Vector3 corner110,
-                              Vector3 corner001, Vector3 corner011, Vector3 corner101, Vector3 corner111) {
+		Vector3 corner001, Vector3 corner011, Vector3 corner101, Vector3 corner111) {
 		if ((builder.getAttributes().getMask() & (Usage.Normal | Usage.BiNormal | Usage.Tangent | Usage.TextureCoordinates)) == 0) {
 			build(builder, vertTmp1.set(corner000, null, null, null), vertTmp2.set(corner010, null, null, null),
 				vertTmp3.set(corner100, null, null, null), vertTmp4.set(corner110, null, null, null),

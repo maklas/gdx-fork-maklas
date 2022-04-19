@@ -34,7 +34,7 @@ public class TiledMapTileMapObject extends TextureMapObject {
 
 	private TiledMapTile tile;
 
-	public TiledMapTileMapObject(TiledMapTile tile, boolean flipHorizontally, boolean flipVertically) {
+	public TiledMapTileMapObject (TiledMapTile tile, boolean flipHorizontally, boolean flipVertically) {
 		this.flipHorizontally = flipHorizontally;
 		this.flipVertically = flipVertically;
 		this.tile = tile;

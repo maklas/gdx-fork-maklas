@@ -485,7 +485,7 @@ public class ShapeRenderer implements Disposable {
 	 * @param col3 The color at (x + width, y + height)
 	 * @param col4 The color at (x, y + height) */
 	public void rect (float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY,
-                      float degrees, Color col1, Color col2, Color col3, Color col4) {
+		float degrees, Color col1, Color col2, Color col3, Color col4) {
 		check(ShapeType.Line, ShapeType.Filled, 8);
 
 		float cos = MathUtils.cosDeg(degrees);
@@ -745,11 +745,11 @@ public class ShapeRenderer implements Disposable {
 			renderer.vertex(x + width, y + height, z + depth);
 
 			renderer.color(colorBits);
-			renderer.vertex(x, y + height, z + depth);
+			renderer.vertex(x + width, y + height, z + depth);
 			renderer.color(colorBits);
 			renderer.vertex(x, y, z + depth);
 			renderer.color(colorBits);
-			renderer.vertex(x + width, y + height, z + depth);
+			renderer.vertex(x, y + height, z + depth);
 
 			// Left
 			renderer.color(colorBits);
@@ -1200,6 +1200,7 @@ public class ShapeRenderer implements Disposable {
 
 	public void flush () {
 		ShapeType type = shapeType;
+		if (type == null) return;
 		end();
 		begin(type);
 	}

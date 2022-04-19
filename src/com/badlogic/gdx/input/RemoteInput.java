@@ -24,10 +24,8 @@ import java.net.Socket;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Input.TextInputListener;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.IntSet;
 
 /** <p>
  * An {@link Input} implementation that receives touch, key, accelerometer and compass events from a remote Android device. Just
@@ -48,9 +46,9 @@ import com.badlogic.gdx.utils.IntSet;
  * @author mzechner */
 public class RemoteInput implements Runnable, Input {
 	public interface RemoteInputListener {
-		void onConnected();
+		void onConnected ();
 
-		void onDisconnected();
+		void onDisconnected ();
 	}
 
 	class KeyEvent {
@@ -185,6 +183,8 @@ public class RemoteInput implements Runnable, Input {
 		}
 	}
 
+	private static final int MAX_TOUCHES = 20;
+
 	public static int DEFAULT_PORT = 8190;
 	private ServerSocket serverSocket;
 	private float[] accel = new float[3];
@@ -199,11 +199,11 @@ public class RemoteInput implements Runnable, Input {
 	boolean[] keys = new boolean[256];
 	boolean keyJustPressed = false;
 	boolean[] justPressedKeys = new boolean[256];
-	int[] deltaX = new int[20];
-	int[] deltaY = new int[20];
-	int[] touchX = new int[20];
-	int[] touchY = new int[20];
-	boolean isTouched[] = new boolean[20];
+	int[] deltaX = new int[MAX_TOUCHES];
+	int[] deltaY = new int[MAX_TOUCHES];
+	int[] touchX = new int[MAX_TOUCHES];
+	int[] touchY = new int[MAX_TOUCHES];
+	boolean isTouched[] = new boolean[MAX_TOUCHES];
 	boolean justTouched = false;
 	InputProcessor processor = null;
 	private final int port;
@@ -275,7 +275,7 @@ public class RemoteInput implements Runnable, Input {
 					case RemoteSender.SIZE:
 						remoteWidth = in.readFloat();
 						remoteHeight = in.readFloat();
-						break;
+						break;	
 					case RemoteSender.GYRO:
 						gyrate[0] = in.readFloat();
 						gyrate[1] = in.readFloat();
@@ -345,7 +345,7 @@ public class RemoteInput implements Runnable, Input {
 	public float getAccelerometerZ () {
 		return accel[2];
 	}
-
+	
 	@Override
 	public float getGyroscopeX () {
 		return gyrate[0];
@@ -359,6 +359,11 @@ public class RemoteInput implements Runnable, Input {
 	@Override
 	public float getGyroscopeZ () {
 		return gyrate[2];
+	}
+
+	@Override
+	public int getMaxPointers () {
+		return MAX_TOUCHES;
 	}
 
 	@Override
@@ -415,6 +420,11 @@ public class RemoteInput implements Runnable, Input {
 	}
 
 	@Override
+	public boolean isButtonJustPressed(int button) {
+		return button == Buttons.LEFT && justTouched;
+	}
+
+	@Override
 	public boolean isKeyPressed (int key) {
 		if (key == Input.Keys.ANY_KEY) {
 			return keyCount > 0;
@@ -442,7 +452,16 @@ public class RemoteInput implements Runnable, Input {
 	}
 
 	@Override
+	public void getTextInput(TextInputListener listener, String title, String text, String hint, OnscreenKeyboardType type) {
+		Gdx.app.getInput().getTextInput(listener, title, text, hint, type);
+	}
+
+	@Override
 	public void setOnscreenKeyboardVisible (boolean visible) {
+	}
+
+	@Override
+	public void setOnscreenKeyboardVisible(boolean visible, OnscreenKeyboardType type) {
 	}
 
 	@Override
@@ -495,6 +514,15 @@ public class RemoteInput implements Runnable, Input {
 		return false;
 	}
 
+	@Override
+	public void setCatchKey (int keycode, boolean catchKey) {
+
+	}
+
+	@Override
+	public boolean isCatchKey (int keycode) {
+		return false;
+	}
 
 	@Override
 	public void setInputProcessor (InputProcessor processor) {

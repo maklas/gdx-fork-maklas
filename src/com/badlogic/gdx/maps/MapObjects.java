@@ -16,10 +16,10 @@
 
 package com.badlogic.gdx.maps;
 
+import java.util.Iterator;
+
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
-
-import java.util.Iterator;
 
 /** @brief Collection of MapObject instances */
 public class MapObjects implements Iterable<MapObject> {

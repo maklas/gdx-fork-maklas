@@ -16,15 +16,27 @@
 
 package com.badlogic.gdx.utils;
 
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.CharBuffer;
+import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.LongBuffer;
+import java.nio.ShortBuffer;
+
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
-
-import java.nio.*;
 
 /** Class with static helper methods to increase the speed of array/direct buffer and direct buffer/direct buffer transfers
  * 
  * @author mzechner, xoppa */
 public final class BufferUtils {
+
+	private BufferUtils () {
+	}
+
 	static Array<ByteBuffer> unsafeBuffers = new Array<ByteBuffer>();
 	static int allocatedUnsafe = 0;
 

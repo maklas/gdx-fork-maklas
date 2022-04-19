@@ -74,7 +74,7 @@ public class RenderableShapeBuilder extends BaseShapeBuilder {
 	 * @param tangentColor Tangent vector's color
 	 * @param binormalColor Binormal vector's color */
 	public static void buildNormals (MeshPartBuilder builder, RenderableProvider renderableProvider, float vectorSize,
-                                     Color normalColor, Color tangentColor, Color binormalColor) {
+		Color normalColor, Color tangentColor, Color binormalColor) {
 
 		renderableProvider.getRenderables(renderables, renderablesPool);
 
@@ -94,7 +94,7 @@ public class RenderableShapeBuilder extends BaseShapeBuilder {
 	 * @param tangentColor Tangent vector's color
 	 * @param binormalColor Binormal vector's color */
 	public static void buildNormals (MeshPartBuilder builder, Renderable renderable, float vectorSize, Color normalColor,
-                                     Color tangentColor, Color binormalColor) {
+		Color tangentColor, Color binormalColor) {
 		Mesh mesh = renderable.meshPart.mesh;
 
 		// Position

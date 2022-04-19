@@ -36,20 +36,21 @@ public class SphereShapeBuilder extends BaseShapeBuilder {
 	/** @deprecated use {@link MeshPartBuilder#setVertexTransform(Matrix4)} instead of using the method signature taking a matrix. */
 	@Deprecated
 	public static void build (MeshPartBuilder builder, final Matrix4 transform, float width, float height, float depth,
-                              int divisionsU, int divisionsV) {
+		int divisionsU, int divisionsV) {
 		build(builder, transform, width, height, depth, divisionsU, divisionsV, 0, 360, 0, 180);
 	}
 
 	public static void build (MeshPartBuilder builder, float width, float height, float depth, int divisionsU, int divisionsV,
-                              float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
+		float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
 		build(builder, matTmp1.idt(), width, height, depth, divisionsU, divisionsV, angleUFrom, angleUTo, angleVFrom, angleVTo);
 	}
 
 	/** @deprecated use {@link MeshPartBuilder#setVertexTransform(Matrix4)} instead of using the method signature taking a matrix. */
 	@Deprecated
 	public static void build (MeshPartBuilder builder, final Matrix4 transform, float width, float height, float depth,
-                              int divisionsU, int divisionsV, float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
-		// FIXME create better sphere method (- only one vertex for each pole, - position)
+		int divisionsU, int divisionsV, float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
+		final boolean closedVFrom = MathUtils.isEqual(angleVFrom, 0f);
+		final boolean closedVTo = MathUtils.isEqual(angleVTo, 180f);
 		final float hw = width * 0.5f;
 		final float hh = height * 0.5f;
 		final float hd = depth * 0.5f;
@@ -83,16 +84,29 @@ public class SphereShapeBuilder extends BaseShapeBuilder {
 			final float h = MathUtils.cos(angleV) * hh;
 			for (int iu = 0; iu <= divisionsU; iu++) {
 				angleU = auo + stepU * iu;
-				u = 1f - us * iu;
+				if (iv == 0 && closedVFrom || iv == divisionsV && closedVTo) {
+					u = 1f - us * (iu - .5f);
+				} else {
+					u = 1f - us * iu;
+				}
 				curr1.position.set(MathUtils.cos(angleU) * hw * t, h, MathUtils.sin(angleU) * hd * t);
 				curr1.normal.set(curr1.position).mul(normalTransform).nor();
 				curr1.position.mul(transform);
 				curr1.uv.set(u, v);
 				tmpIndices.set(tempOffset, builder.vertex(curr1));
 				final int o = tempOffset + s;
-				if ((iv > 0) && (iu > 0)) // FIXME don't duplicate lines and points
-					builder.rect(tmpIndices.get(tempOffset), tmpIndices.get((o - 1) % s), tmpIndices.get((o - (divisionsU + 2)) % s),
-						tmpIndices.get((o - (divisionsU + 1)) % s));
+				if ((iv > 0) && (iu > 0)) { // FIXME don't duplicate lines and points
+					if (iv == 1 && closedVFrom) {
+						builder.triangle(tmpIndices.get(tempOffset), tmpIndices.get((o - 1) % s),
+							tmpIndices.get((o - (divisionsU + 1)) % s));
+					} else if (iv == divisionsV && closedVTo) {
+						builder.triangle(tmpIndices.get(tempOffset), tmpIndices.get((o - (divisionsU + 2)) % s),
+							tmpIndices.get((o - (divisionsU + 1)) % s));
+					} else {
+						builder.rect(tmpIndices.get(tempOffset), tmpIndices.get((o - 1) % s),
+							tmpIndices.get((o - (divisionsU + 2)) % s), tmpIndices.get((o - (divisionsU + 1)) % s));
+					}
+				}
 				tempOffset = (tempOffset + 1) % tmpIndices.size;
 			}
 		}

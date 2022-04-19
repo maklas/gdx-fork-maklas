@@ -16,17 +16,20 @@
 
 package com.badlogic.gdx.graphics.g2d;
 
+import static com.badlogic.gdx.graphics.g2d.Sprite.*;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Mesh.VertexDataType;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
-
-import static com.badlogic.gdx.graphics.g2d.Sprite.SPRITE_SIZE;
-import static com.badlogic.gdx.graphics.g2d.Sprite.VERTEX_SIZE;
 
 /** A PolygonSpriteBatch is used to draw 2D polygons that reference a texture (region). The class will batch the drawing commands
  * and optimize them for processing by the GPU.
@@ -151,9 +154,9 @@ public class PolygonSpriteBatch implements PolygonBatch {
 
 		Gdx.gl.glDepthMask(false);
 		if (customShader != null)
-			customShader.begin();
+			customShader.bind();
 		else
-			shader.begin();
+			shader.bind();
 		setupMatrices();
 
 		drawing = true;
@@ -169,11 +172,6 @@ public class PolygonSpriteBatch implements PolygonBatch {
 		GL20 gl = Gdx.gl;
 		gl.glDepthMask(true);
 		if (isBlendingEnabled()) gl.glDisable(GL20.GL_BLEND);
-
-		if (customShader != null)
-			customShader.end();
-		else
-			shader.end();
 	}
 
 	@Override
@@ -285,7 +283,7 @@ public class PolygonSpriteBatch implements PolygonBatch {
 
 	@Override
 	public void draw (PolygonRegion region, float x, float y, float originX, float originY, float width, float height,
-                      float scaleX, float scaleY, float rotation) {
+		float scaleX, float scaleY, float rotation) {
 		if (!drawing) throw new IllegalStateException("PolygonSpriteBatch.begin must be called before draw.");
 
 		final short[] triangles = this.triangles;
@@ -335,7 +333,7 @@ public class PolygonSpriteBatch implements PolygonBatch {
 
 	@Override
 	public void draw (Texture texture, float[] polygonVertices, int verticesOffset, int verticesCount, short[] polygonTriangles,
-                      int trianglesOffset, int trianglesCount) {
+		int trianglesOffset, int trianglesCount) {
 		if (!drawing) throw new IllegalStateException("PolygonSpriteBatch.begin must be called before draw.");
 
 		final short[] triangles = this.triangles;
@@ -360,7 +358,7 @@ public class PolygonSpriteBatch implements PolygonBatch {
 
 	@Override
 	public void draw (Texture texture, float x, float y, float originX, float originY, float width, float height, float scaleX,
-                      float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX, boolean flipY) {
+		float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX, boolean flipY) {
 		if (!drawing) throw new IllegalStateException("PolygonSpriteBatch.begin must be called before draw.");
 
 		final short[] triangles = this.triangles;
@@ -502,7 +500,7 @@ public class PolygonSpriteBatch implements PolygonBatch {
 
 	@Override
 	public void draw (Texture texture, float x, float y, float width, float height, int srcX, int srcY, int srcWidth,
-                      int srcHeight, boolean flipX, boolean flipY) {
+		int srcHeight, boolean flipX, boolean flipY) {
 		if (!drawing) throw new IllegalStateException("PolygonSpriteBatch.begin must be called before draw.");
 
 		final short[] triangles = this.triangles;
@@ -749,15 +747,22 @@ public class PolygonSpriteBatch implements PolygonBatch {
 		final short[] triangles = this.triangles;
 		final float[] vertices = this.vertices;
 
-		final int triangleCount = count / SPRITE_SIZE * 6;
-		if (texture != lastTexture)
+		int triangleCount = count / SPRITE_SIZE * 6;
+		int batch;
+		if (texture != lastTexture) {
 			switchTexture(texture);
-		else if (triangleIndex + triangleCount > triangles.length || vertexIndex + count > vertices.length) //
+			batch = Math.min(Math.min(count, vertices.length - (vertices.length % SPRITE_SIZE)), triangles.length / 6 * SPRITE_SIZE);
+			triangleCount = batch / SPRITE_SIZE * 6;
+		} else if (triangleIndex + triangleCount > triangles.length || vertexIndex + count > vertices.length) {
 			flush();
+			batch = Math.min(Math.min(count, vertices.length - (vertices.length % SPRITE_SIZE)), triangles.length / 6 * SPRITE_SIZE);
+			triangleCount = batch / SPRITE_SIZE * 6;
+		} else
+			batch = count;
 
-		final int vertexIndex = this.vertexIndex;
-		int triangleIndex = this.triangleIndex;
+		int vertexIndex = this.vertexIndex;
 		short vertex = (short)(vertexIndex / VERTEX_SIZE);
+		int triangleIndex = this.triangleIndex;
 		for (int n = triangleIndex + triangleCount; triangleIndex < n; triangleIndex += 6, vertex += 4) {
 			triangles[triangleIndex] = vertex;
 			triangles[triangleIndex + 1] = (short)(vertex + 1);
@@ -766,10 +771,21 @@ public class PolygonSpriteBatch implements PolygonBatch {
 			triangles[triangleIndex + 4] = (short)(vertex + 3);
 			triangles[triangleIndex + 5] = vertex;
 		}
-		this.triangleIndex = triangleIndex;
 
-		System.arraycopy(spriteVertices, offset, vertices, vertexIndex, count);
-		this.vertexIndex += count;
+		while (true) {
+			System.arraycopy(spriteVertices, offset, vertices, vertexIndex, batch);
+			this.vertexIndex = vertexIndex + batch;
+			this.triangleIndex = triangleIndex;
+			count -= batch;
+			if (count == 0) break;
+			offset += batch;
+			flush();
+			vertexIndex = 0;
+			if (batch > count) {
+				batch = Math.min(count, triangles.length / 6 * SPRITE_SIZE);
+				triangleIndex = batch / SPRITE_SIZE * 6;
+			}
+		}
 	}
 
 	@Override
@@ -837,7 +853,7 @@ public class PolygonSpriteBatch implements PolygonBatch {
 
 	@Override
 	public void draw (TextureRegion region, float x, float y, float originX, float originY, float width, float height,
-                      float scaleX, float scaleY, float rotation) {
+		float scaleX, float scaleY, float rotation) {
 		if (!drawing) throw new IllegalStateException("PolygonSpriteBatch.begin must be called before draw.");
 
 		final short[] triangles = this.triangles;
@@ -968,7 +984,7 @@ public class PolygonSpriteBatch implements PolygonBatch {
 
 	@Override
 	public void draw (TextureRegion region, float x, float y, float originX, float originY, float width, float height,
-                      float scaleX, float scaleY, float rotation, boolean clockwise) {
+		float scaleX, float scaleY, float rotation, boolean clockwise) {
 		if (!drawing) throw new IllegalStateException("PolygonSpriteBatch.begin must be called before draw.");
 
 		final short[] triangles = this.triangles;
@@ -1191,7 +1207,7 @@ public class PolygonSpriteBatch implements PolygonBatch {
 		lastTexture.bind();
 		Mesh mesh = this.mesh;
 		mesh.setVertices(vertices, 0, vertexIndex);
-		mesh.setIndices(triangles, 0, triangleIndex);
+		mesh.setIndices(triangles, 0, trianglesInBatch);
 		if (blendingDisabled) {
 			Gdx.gl.glDisable(GL20.GL_BLEND);
 		} else {
@@ -1223,8 +1239,9 @@ public class PolygonSpriteBatch implements PolygonBatch {
 	}
 
 	@Override
-	public void setBlendFunctionSeparate(int srcFuncColor, int dstFuncColor, int srcFuncAlpha, int dstFuncAlpha) {
-		if (blendSrcFunc == srcFuncColor && blendDstFunc == dstFuncColor && blendSrcFuncAlpha == srcFuncAlpha && blendDstFuncAlpha == dstFuncAlpha) return;
+	public void setBlendFunctionSeparate (int srcFuncColor, int dstFuncColor, int srcFuncAlpha, int dstFuncAlpha) {
+		if (blendSrcFunc == srcFuncColor && blendDstFunc == dstFuncColor && blendSrcFuncAlpha == srcFuncAlpha
+			&& blendDstFuncAlpha == dstFuncAlpha) return;
 		flush();
 		blendSrcFunc = srcFuncColor;
 		blendDstFunc = dstFuncColor;
@@ -1243,12 +1260,12 @@ public class PolygonSpriteBatch implements PolygonBatch {
 	}
 
 	@Override
-	public int getBlendSrcFuncAlpha() {
+	public int getBlendSrcFuncAlpha () {
 		return blendSrcFuncAlpha;
 	}
 
 	@Override
-	public int getBlendDstFuncAlpha() {
+	public int getBlendDstFuncAlpha () {
 		return blendDstFuncAlpha;
 	}
 
@@ -1282,7 +1299,7 @@ public class PolygonSpriteBatch implements PolygonBatch {
 		if (drawing) setupMatrices();
 	}
 
-	private void setupMatrices () {
+	protected void setupMatrices () {
 		combinedMatrix.set(projectionMatrix).mul(transformMatrix);
 		if (customShader != null) {
 			customShader.setUniformMatrix("u_projTrans", combinedMatrix);
@@ -1304,17 +1321,13 @@ public class PolygonSpriteBatch implements PolygonBatch {
 	public void setShader (ShaderProgram shader) {
 		if (drawing) {
 			flush();
-			if (customShader != null)
-				customShader.end();
-			else
-				this.shader.end();
 		}
 		customShader = shader;
 		if (drawing) {
 			if (customShader != null)
-				customShader.begin();
+				customShader.bind();
 			else
-				this.shader.begin();
+				this.shader.bind();
 			setupMatrices();
 		}
 	}

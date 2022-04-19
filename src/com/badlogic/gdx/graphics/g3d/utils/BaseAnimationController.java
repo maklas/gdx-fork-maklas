@@ -141,7 +141,7 @@ public class BaseAnimationController {
 
 	/** Apply two animations, blending the second onto to first using weight. */
 	protected void applyAnimations (final Animation anim1, final float time1, final Animation anim2, final float time2,
-                                    final float weight) {
+		final float weight) {
 		if (anim2 == null || weight == 0.f)
 			applyAnimation(anim1, time1);
 		else if (anim1 == null || weight == 1.f)
@@ -158,14 +158,33 @@ public class BaseAnimationController {
 
 	private final static Transform tmpT = new Transform();
 
-	private final static <T> int getFirstKeyframeIndexAtTime (final Array<NodeKeyframe<T>> arr, final float time) {
-		final int n = arr.size - 1;
-		for (int i = 0; i < n; i++) {
-			if (time >= arr.get(i).keytime && time <= arr.get(i + 1).keytime) {
+	/** Find first key frame index just before a given time
+	 * @param arr Key frames ordered by time ascending
+	 * @param time Time to search
+	 * @return key frame index, 0 if time is out of key frames time range */
+	final static <T> int getFirstKeyframeIndexAtTime (final Array<NodeKeyframe<T>> arr, final float time) {
+		final int lastIndex = arr.size - 1;
+
+		// edges cases : time out of range always return first index
+		if (lastIndex <= 0 || time < arr.get(0).keytime || time > arr.get(lastIndex).keytime) {
+			return 0;
+		}
+
+		// binary search
+		int minIndex = 0;
+		int maxIndex = lastIndex;
+
+		while (minIndex < maxIndex) {
+			int i = (minIndex + maxIndex) / 2;
+			if (time > arr.get(i + 1).keytime) {
+				minIndex = i + 1;
+			} else if (time < arr.get(i).keytime) {
+				maxIndex = i - 1;
+			} else {
 				return i;
 			}
 		}
-		return 0;
+		return minIndex;
 	}
 
 	private final static Vector3 getTranslationAtTime (final NodeAnimation nodeAnim, final float time, final Vector3 out) {
@@ -232,7 +251,7 @@ public class BaseAnimationController {
 	}
 
 	private final static void applyNodeAnimationBlending (final NodeAnimation nodeAnim, final ObjectMap<Node, Transform> out,
-                                                          final Pool<Transform> pool, final float alpha, final float time) {
+		final Pool<Transform> pool, final float alpha, final float time) {
 
 		final Node node = nodeAnim.node;
 		node.isAnimated = true;
@@ -254,7 +273,7 @@ public class BaseAnimationController {
 
 	/** Helper method to apply one animation to either an objectmap for blending or directly to the bones. */
 	protected static void applyAnimation (final ObjectMap<Node, Transform> out, final Pool<Transform> pool, final float alpha,
-                                          final Animation animation, final float time) {
+		final Animation animation, final float time) {
 
 		if (out == null) {
 			for (final NodeAnimation nodeAnim : animation.nodeAnimations)

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.Writer;
 
 //@off
-
 /**
  * Builder style API for emitting XML. <pre>
  * StringWriter writer = new StringWriter();

@@ -35,13 +35,13 @@ public interface MapRenderer {
 	 * @param viewboundsWidth
 	 * @param viewboundsHeight */
 	public void setView (Matrix4 projectionMatrix, float viewboundsX, float viewboundsY, float viewboundsWidth,
-                         float viewboundsHeight);
+		float viewboundsHeight);
 
 	/** Renders all the layers of a map. */
-	public void render();
+	public void render ();
 
 	/** Renders the given layers of a map.
-	 *
+	 * 
 	 * @param layers the layers to render. */
-	public void render(int[] layers);
+	public void render (int[] layers);
 }

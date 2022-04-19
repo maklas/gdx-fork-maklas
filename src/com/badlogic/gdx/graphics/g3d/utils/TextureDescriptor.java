@@ -29,7 +29,7 @@ public class TextureDescriptor<T extends GLTexture> implements Comparable<Textur
 	// TODO add other values, see http://www.opengl.org/sdk/docs/man/xhtml/glTexParameter.xml
 
 	public TextureDescriptor (final T texture, final Texture.TextureFilter minFilter, final Texture.TextureFilter magFilter,
-                              final Texture.TextureWrap uWrap, final Texture.TextureWrap vWrap) {
+		final Texture.TextureWrap uWrap, final Texture.TextureWrap vWrap) {
 		set(texture, minFilter, magFilter, uWrap, vWrap);
 	}
 
@@ -41,7 +41,7 @@ public class TextureDescriptor<T extends GLTexture> implements Comparable<Textur
 	}
 
 	public void set (final T texture, final Texture.TextureFilter minFilter, final Texture.TextureFilter magFilter,
-                     final Texture.TextureWrap uWrap, final Texture.TextureWrap vWrap) {
+		final Texture.TextureWrap uWrap, final Texture.TextureWrap vWrap) {
 		this.texture = texture;
 		this.minFilter = minFilter;
 		this.magFilter = magFilter;

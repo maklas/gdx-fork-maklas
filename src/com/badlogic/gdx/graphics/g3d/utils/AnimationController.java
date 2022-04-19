@@ -41,12 +41,12 @@ public class AnimationController extends BaseAnimationController {
 	public interface AnimationListener {
 		/** Gets called when an animation is completed.
 		 * @param animation The animation which just completed. */
-		void onEnd(final AnimationDesc animation);
+		void onEnd (final AnimationDesc animation);
 
 		/** Gets called when an animation is looped. The {@link AnimationDesc#loopCount} is updated prior to this call and can be
 		 * read or written to alter the number of remaining loops.
 		 * @param animation The animation which just looped. */
-		void onLoop(final AnimationDesc animation);
+		void onLoop (final AnimationDesc animation);
 	}
 
 	/** Class describing how to play and {@link Animation}. You can read the values within this class to get the progress of the
@@ -71,20 +71,23 @@ public class AnimationController extends BaseAnimationController {
 		protected AnimationDesc () {
 		}
 
-		/** @return the remaining time or 0 if still animating. */
+		/** @param delta delta time, must be positive.
+		 * @return the remaining time or -1 if still animating. */
 		protected float update (float delta) {
 			if (loopCount != 0 && animation != null) {
 				int loops;
 				final float diff = speed * delta;
 				if (!MathUtils.isZero(duration)) {
 					time += diff;
-					loops = (int)Math.abs(time / duration);
-					if (time < 0f) {
-						loops++;
-						while (time < 0f)
-							time += duration;
+					if (speed < 0) {
+						float invTime = duration - time;
+						loops = (int)Math.abs(invTime / duration);
+						invTime = Math.abs(invTime % duration);
+						time = duration - invTime;
+					} else {
+						loops = (int)Math.abs(time / duration);
+						time = Math.abs(time % duration);
 					}
-					time = Math.abs(time % duration);
 				} else
 					loops = 1;
 				for (int i = 0; i < loops; i++) {
@@ -97,7 +100,7 @@ public class AnimationController extends BaseAnimationController {
 						return result;
 					}
 				}
-				return 0f;
+				return -1;
 			} else
 				return delta;
 		}
@@ -138,7 +141,7 @@ public class AnimationController extends BaseAnimationController {
 	}
 
 	private AnimationDesc obtain (final Animation anim, float offset, float duration, int loopCount, float speed,
-                                  final AnimationListener listener) {
+		final AnimationListener listener) {
 		if (anim == null) return null;
 		final AnimationDesc result = animationPool.obtain();
 		result.animation = anim;
@@ -179,11 +182,11 @@ public class AnimationController extends BaseAnimationController {
 		}
 		if (current == null || current.loopCount == 0 || current.animation == null) return;
 		final float remain = current.update(delta);
-		if (remain != 0f && queued != null) {
+		if (remain >= 0f && queued != null) {
 			inAction = false;
 			animate(queued, queuedTransitionTime);
-			queued = null;			
-			update(remain);
+			queued = null;
+			if (remain > 0f) update(remain);
 			return;
 		}
 		if (previous != null)
@@ -264,7 +267,7 @@ public class AnimationController extends BaseAnimationController {
 
 	/** Set the active animation, replacing any current animation. */
 	protected AnimationDesc setAnimation (final Animation anim, float offset, float duration, int loopCount, float speed,
-                                          final AnimationListener listener) {
+		final AnimationListener listener) {
 		return setAnimation(obtain(anim, offset, duration, loopCount, speed, listener));
 	}
 
@@ -351,13 +354,13 @@ public class AnimationController extends BaseAnimationController {
 
 	/** Changes the current animation by blending the new on top of the old during the transition time. */
 	protected AnimationDesc animate (final Animation anim, float offset, float duration, int loopCount, float speed,
-                                     final AnimationListener listener, float transitionTime) {
+		final AnimationListener listener, float transitionTime) {
 		return animate(obtain(anim, offset, duration, loopCount, speed, listener), transitionTime);
 	}
 
 	/** Changes the current animation by blending the new on top of the old during the transition time. */
 	protected AnimationDesc animate (final AnimationDesc anim, float transitionTime) {
-		if (current == null)
+		if (current == null || current.loopCount == 0)
 			current = anim;
 		else if (inAction)
 			queue(anim, transitionTime);
@@ -415,7 +418,7 @@ public class AnimationController extends BaseAnimationController {
 
 	/** Queue an animation to be applied when the current is finished. If current is continuous it will be synced on next loop. */
 	protected AnimationDesc queue (final Animation anim, float offset, float duration, int loopCount, float speed,
-                                   final AnimationListener listener, float transitionTime) {
+		final AnimationListener listener, float transitionTime) {
 		return queue(obtain(anim, offset, duration, loopCount, speed, listener), transitionTime);
 	}
 
@@ -468,7 +471,7 @@ public class AnimationController extends BaseAnimationController {
 
 	/** Apply an action animation on top of the current animation. */
 	protected AnimationDesc action (final Animation anim, float offset, float duration, int loopCount, float speed,
-                                    final AnimationListener listener, float transitionTime) {
+		final AnimationListener listener, float transitionTime) {
 		return action(obtain(anim, offset, duration, loopCount, speed, listener), transitionTime);
 	}
 

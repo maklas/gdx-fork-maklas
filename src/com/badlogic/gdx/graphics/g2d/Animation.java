@@ -58,7 +58,7 @@ public class Animation<T> {
 	public Animation (float frameDuration, Array<? extends T> keyFrames) {
 		this.frameDuration = frameDuration;
 		Class arrayType = keyFrames.items.getClass().getComponentType();
-		T[] frames = (T[]) ArrayReflection.newInstance(arrayType, keyFrames.size);
+		T[] frames = (T[])ArrayReflection.newInstance(arrayType, keyFrames.size);
 		for (int i = 0, n = keyFrames.size; i < n; i++) {
 			frames[i] = keyFrames.get(i);
 		}

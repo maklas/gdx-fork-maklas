@@ -378,6 +378,7 @@ public class Decal {
 	 * 
 	 * @return vertex array backing the decal */
 	public float[] getVertices () {
+		update();
 		return vertices;
 	}
 
@@ -686,7 +687,7 @@ public class Decal {
 	 * @param material Custom decal material
 	 * @return Created decal */
 	public static Decal newDecal (float width, float height, TextureRegion textureRegion, int srcBlendFactor, int dstBlendFactor,
-                                  DecalMaterial material) {
+		DecalMaterial material) {
 		Decal decal = new Decal(material);
 		decal.setTextureRegion(textureRegion);
 		decal.setBlending(srcBlendFactor, dstBlendFactor);

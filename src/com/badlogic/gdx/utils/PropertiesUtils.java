@@ -17,13 +17,13 @@
 
 package com.badlogic.gdx.utils;
 
-import com.badlogic.gdx.utils.ObjectMap.Entry;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.Date;
+
+import com.badlogic.gdx.utils.ObjectMap.Entry;
 
 /** {@code PropertiesUtils} is a helper class that allows you to load and store key/value pairs of an
  * {@code ObjectMap<String,String>} with the same line-oriented syntax supported by {@code java.util.Properties}. */
@@ -47,8 +47,8 @@ public final class PropertiesUtils {
 	 * @throws IllegalArgumentException if a malformed Unicode escape appears in the input. */
 	@SuppressWarnings("deprecation")
 	public static void load (ObjectMap<String, String> properties, Reader reader) throws IOException {
-		if (properties == null) throw new NullPointerException("ObjectMap cannot be null");
-		if (reader == null) throw new NullPointerException("Reader cannot be null");
+		if (properties == null) throw new NullPointerException("properties cannot be null");
+		if (reader == null) throw new NullPointerException("reader cannot be null");
 		int mode = NONE, unicode = 0, count = 0;
 		char nextChar, buf[] = new char[40];
 		int offset = 0, keyLength = -1, intVal;

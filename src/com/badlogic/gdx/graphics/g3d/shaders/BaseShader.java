@@ -16,7 +16,12 @@
 
 package com.badlogic.gdx.graphics.g3d.shaders;
 
-import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GLTexture;
+import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.VertexAttribute;
+import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.Attributes;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.Shader;
@@ -199,7 +204,7 @@ public abstract class BaseShader implements Shader {
 	public void begin (Camera camera, RenderContext context) {
 		this.camera = camera;
 		this.context = context;
-		program.begin();
+		program.bind();
 		currentMesh = null;
 		for (int u, i = 0; i < globalUniforms.size; ++i)
 			if (setters.get(u = globalUniforms.get(i)) != null) setters.get(u).set(this, u, null, null);
@@ -245,7 +250,6 @@ public abstract class BaseShader implements Shader {
 			currentMesh.unbind(program, tempArray.items);
 			currentMesh = null;
 		}
-		program.end();
 	}
 
 	@Override

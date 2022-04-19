@@ -28,11 +28,11 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 public interface ServerSocket extends Disposable {
 
 	/** @return the Protocol used by this socket */
-	public Protocol getProtocol();
+	public Protocol getProtocol ();
 
 	/** Accepts a new incoming connection from a client {@link Socket}. The given hints will be applied to the accepted socket.
 	 * Blocking, call on a separate thread.
-	 *
+	 * 
 	 * @param hints additional {@link SocketHints} applied to the accepted {@link Socket}. Input null to use the default setting
 	 *           provided by the system.
 	 * @return the accepted {@link Socket}

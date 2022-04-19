@@ -98,7 +98,7 @@ public abstract class Camera {
 	/** Normalizes the up vector by first calculating the right vector via a cross product between direction and up, and then
 	 * recalculating the up vector via a cross product between right and direction. */
 	public void normalizeUp () {
-		tmpVec.set(direction).crs(up).nor();
+		tmpVec.set(direction).crs(up);
 		up.set(tmpVec).crs(direction).nor();
 	}
 
@@ -194,7 +194,7 @@ public abstract class Camera {
 	public Vector3 unproject (Vector3 screenCoords, float viewportX, float viewportY, float viewportWidth, float viewportHeight) {
 		float x = screenCoords.x, y = screenCoords.y;
 		x = x - viewportX;
-		y = Gdx.graphics.getHeight() - y - 1;
+		y = Gdx.graphics.getHeight() - y;
 		y = y - viewportY;
 		screenCoords.x = (2 * x) / viewportWidth - 1;
 		screenCoords.y = (2 * y) / viewportHeight - 1;
@@ -253,7 +253,7 @@ public abstract class Camera {
 	 * @param viewportHeight the height of the viewport in pixels
 	 * @return the picking Ray. */
 	public Ray getPickRay (float screenX, float screenY, float viewportX, float viewportY, float viewportWidth,
-                           float viewportHeight) {
+		float viewportHeight) {
 		unproject(ray.origin.set(screenX, screenY, 0), viewportX, viewportY, viewportWidth, viewportHeight);
 		unproject(ray.direction.set(screenX, screenY, 1), viewportX, viewportY, viewportWidth, viewportHeight);
 		ray.direction.sub(ray.origin).nor();
@@ -266,10 +266,5 @@ public abstract class Camera {
 	 * @return the picking Ray. */
 	public Ray getPickRay (float screenX, float screenY) {
 		return getPickRay(screenX, screenY, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-	}
-
-	public void setPosition(float x, float y){
-		this.position.x = x;
-		this.position.y = y;
 	}
 }
